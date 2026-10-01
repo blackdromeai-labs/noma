@@ -44,7 +44,7 @@ def export(ckpt: str, out: str) -> None:
 
 def from_pretrained(path_or_repo: str, device: str | None = None, dtype=torch.bfloat16):
     """Build a ready-to-use Noma from an exported folder or a Hugging Face repo id."""
-    from safetensors.torch import load_file
+    from safetensors import safe_open
     from transformers import AutoTokenizer
     from transformers.models.qwen3_5.configuration_qwen3_5 import Qwen3_5TextConfig
     from transformers.models.qwen3_5.modeling_qwen3_5 import Qwen3_5TextModel
@@ -65,8 +65,16 @@ def from_pretrained(path_or_repo: str, device: str | None = None, dtype=torch.bf
     with torch.device("meta"):
         body = Qwen3_5TextModel(bcfg)
     body.norm = torch.nn.Identity()
-    state = load_file(str(p / "model.safetensors"), device=dev)
-    weights = {k[5:]: v.to(dtype) for k, v in state.items() if k.startswith("body.")}
+    # Tensors are read one at a time and moved straight to the device, so a 6 GB GPU or a
+    # machine with little free RAM can load the model.
+    state, weights = {}, {}
+    with safe_open(str(p / "model.safetensors"), framework="pt", device="cpu") as f:
+        for k in f.keys():
+            t = f.get_tensor(k)
+            if k.startswith("body."):
+                weights[k[5:]] = t.to(dev, dtype)
+            else:
+                state[k] = t.to(dev)
     missing, unexpected = body.load_state_dict(weights, strict=False, assign=True)
     if missing:
         raise RuntimeError(f"model.safetensors is missing backbone weights: {missing[:5]}")

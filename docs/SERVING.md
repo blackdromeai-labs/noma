@@ -30,12 +30,12 @@ The server has no authentication. Run it on localhost or behind your own gateway
 
 | Device | Works | Notes |
 |---|---|---|
-| NVIDIA GPU, 8 GB or more | yes | Fast path. This is the configuration all published latencies use. |
-| NVIDIA GPU, 6 GB | yes | Fits; use `--no-fast-path` if graph capture runs out of memory. |
+| NVIDIA GPU, 8 GB or more, Linux | yes | Fast path. All published latencies use this setup. |
+| NVIDIA GPU, 6 GB | yes | The model takes 5.2 GB. Tested on a laptop RTX 4050 on Windows: about 0.4 s per request with the reference kernels. Use `--no-fast-path`. |
 | Apple silicon (MPS) | yes | Plain path. |
-| CPU | yes | Plain path. Fine for trying it out, slow for production. |
+| CPU | yes | Plain path. Loads in about 6 GB of RAM. Tens of seconds per request: enough to check an answer, not to serve. |
 
-The weights are one `model.safetensors` file in bfloat16. Nothing else is downloaded: the
+The weights are one 5.4 GB `model.safetensors` file in bfloat16. Nothing else is downloaded: the
 backbone is already inside it with the adapter merged.
 
 For full speed on Linux with an NVIDIA GPU, install the optimised kernels for the
