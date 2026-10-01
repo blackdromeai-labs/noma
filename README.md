@@ -303,4 +303,4 @@ on Qwen3.5-4B-Base (Apache-2.0); see [NOTICE](NOTICE).
 
 Questions, results, or something Noma got wrong: **hello@blackdrome.tech**
 
-<p align="center"><sub>Blackdrome AI Labs · <a href="https://blackdromeai.vercel.app/">blackdromeai.vercel.app</a></sub></p>
+<p align="center"><sub>Blackdrome AI Labs · <a href="https://blackdrome.tech/">blackdrome.tech</a></sub></p>
