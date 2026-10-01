@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1166 390" width="1166" height="390" role="img">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+    <stop offset="0" stop-color="#08243B"/><stop offset="0.6" stop-color="#12507A"/><stop offset="1" stop-color="#1C6E8E"/>
+  </linearGradient>
+  <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2E8FA6"/><stop offset="1" stop-color="#7DD0C0"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.85" cy="0.1" r="0.7">
+    <stop offset="0" stop-color="#7DD0C0" stop-opacity="0.22"/><stop offset="1" stop-color="#7DD0C0" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="1166" height="390" rx="18" fill="url(#bg)"/>
+<rect width="1166" height="390" rx="18" fill="url(#glow)"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7DD0C0"/></marker></defs>
+<text x="48" y="56" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#7DD0C0" text-anchor="start" font-weight="600" letter-spacing="3">WHERE IT FITS</text>
+<text x="48" y="96" font-family="Playfair Display, Georgia, 'Times New Roman', serif" font-size="30" fill="#F7F5EF" text-anchor="start" font-weight="400" >The decision layer of an agent</text>
+<text x="48" y="124" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#A9C6D2" text-anchor="start" font-weight="400" >A large model does the work. Noma answers the small questions around it, in milliseconds.</text>
+<rect x="48" y="170" width="220" height="120" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.22"/>
+<text x="66" y="200" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#F7F5EF" text-anchor="start" font-weight="600" >Incoming request</text>
+<text x="66" y="224" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >ticket, message,</text>
+<text x="66" y="243" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >tool result, document</text>
+<rect x="318" y="170" width="240" height="120" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.7"/>
+<text x="336" y="200" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#7DD0C0" text-anchor="start" font-weight="600" >Noma: route</text>
+<text x="336" y="224" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >which queue? which model?</text>
+<text x="336" y="243" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >needs tools? urgent?</text>
+<rect x="608" y="170" width="220" height="120" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.22"/>
+<text x="626" y="200" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#F7F5EF" text-anchor="start" font-weight="600" >Agent / LLM</text>
+<text x="626" y="224" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >plans, writes, calls tools</text>
+<text x="626" y="243" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >(seconds, tokens)</text>
+<rect x="878" y="170" width="240" height="120" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.7"/>
+<text x="896" y="200" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#7DD0C0" text-anchor="start" font-weight="600" >Noma: verify</text>
+<text x="896" y="224" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >did the step succeed?</text>
+<text x="896" y="243" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >safe to continue? done?</text>
+<line x1="268" y1="230" x2="316" y2="230" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" marker-end="url(#ah)"/>
+<line x1="558" y1="230" x2="606" y2="230" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" marker-end="url(#ah)"/>
+<line x1="828" y1="230" x2="876" y2="230" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" marker-end="url(#ah)"/>
+<path d="M998 290 C 998 350, 718 350, 718 292" fill="none" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" stroke-dasharray="5 5" marker-end="url(#ah)"/>
+<text x="858" y="352" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >retry, escalate or stop when abstain or uncertainty is high</text>
+</svg>

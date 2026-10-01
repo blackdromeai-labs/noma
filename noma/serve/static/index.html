@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noma · Playground · Blackdrome AI Labs</title>
+<meta name="description" content="Noma playground: fast, calibrated decisions over any text, served locally.">
+<link rel="icon" href="/static/blackdrome-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Quicksand:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="depth" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+
+<header class="top reveal" style="--d:0">
+  <a class="brand" href="https://blackdromeai.vercel.app/" target="_blank" rel="noopener">
+    <img src="/static/blackdrome-logo.svg" alt="Blackdrome AI Labs" class="logo">
+  </a>
+  <div class="status" id="status" aria-live="polite">
+    <span class="dot" id="statusDot"></span><span id="statusText">Connecting…</span>
+  </div>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle light or dark theme" title="Theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+  </button>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow reveal" style="--d:1">NOMA · DECISION MODEL · BLACKDROME AI LABS</p>
+    <h1 class="title" id="title" aria-label="Decisions in milliseconds.">Decisions in milliseconds.</h1>
+    <p class="lede reveal" style="--d:4">Give Noma a state and a few typed questions. It returns calibrated probabilities, an abstain signal and its own uncertainty, over the same <code>/v1/systemone</code> API as Jev.</p>
+  </section>
+
+  <nav class="presets reveal" style="--d:5" aria-label="Examples" id="presets"></nav>
+
+  <div class="grid">
+    <section class="panel reveal" style="--d:6" aria-labelledby="stateH">
+      <div class="panel-head"><span class="count">01 / 03</span><h2 id="stateH">State</h2>
+        <span class="meta" id="stateMeta">0 words</span></div>
+      <textarea id="state" spellcheck="false" aria-label="State: the text or JSON Noma decides over" placeholder="Paste a ticket, a log line, an agent step, a contract clause…"></textarea>
+      <label class="ref">Reference time <input id="refTime" type="text" placeholder="2026-10-01T09:00:00Z (optional)"></label>
+    </section>
+
+    <section class="panel reveal" style="--d:7" aria-labelledby="qH">
+      <div class="panel-head"><span class="count">02 / 03</span><h2 id="qH">Questions</h2>
+        <button class="ghost small" id="addQ">+ Question</button></div>
+      <div id="questions" class="questions"></div>
+    </section>
+
+    <section class="panel answers reveal" style="--d:8" aria-labelledby="aH">
+      <div class="panel-head"><span class="count">03 / 03</span><h2 id="aH">Answers</h2>
+        <span class="meta" id="latency"></span></div>
+      <div id="answers" class="answer-list" aria-live="polite">
+        <p class="empty">Press <kbd>Decide</kbd> or <kbd>Ctrl</kbd> + <kbd>Enter</kbd>.</p>
+      </div>
+      <div class="decide-wrap">
+        <button class="decide" id="decideBtn"><span class="ping" aria-hidden="true"></span><span class="label">Decide</span></button>
+      </div>
+    </section>
+  </div>
+
+  <section class="code reveal" style="--d:9" aria-labelledby="codeH">
+    <div class="code-head">
+      <h2 id="codeH">Use it from code</h2>
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-tab="curl">curl</button>
+        <button role="tab" aria-selected="false" data-tab="python">Python</button>
+        <button role="tab" aria-selected="false" data-tab="jev">Jev client</button>
+      </div>
+      <button class="ghost small" id="copyBtn">Copy</button>
+    </div>
+    <pre><code id="codeBox"></code></pre>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>Noma · MPL-2.0 · <a href="https://github.com/blackdromeai-labs/noma" target="_blank" rel="noopener">GitHub</a> · <a href="https://huggingface.co/BlackdromeAILabs/noma" target="_blank" rel="noopener">Hugging Face</a></span>
+  <span>Blackdrome AI Labs</span>
+</footer>
+
+<template id="qTpl">
+  <article class="q">
+    <div class="q-row">
+      <input class="q-key" aria-label="Question key" spellcheck="false">
+      <div class="seg" role="radiogroup" aria-label="Question type">
+        <button data-type="choice" role="radio">Choice</button>
+        <button data-type="noul" role="radio">Yes / No</button>
+        <button data-type="score" role="radio">Score</button>
+      </div>
+      <button class="icon-btn rm" aria-label="Remove question" title="Remove">×</button>
+    </div>
+    <input class="q-ins" aria-label="Instructions" placeholder="What should Noma decide?">
+    <div class="opts"></div>
+    <button class="ghost small add-opt">+ Option</button>
+  </article>
+</template>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Weights and runs
+/runs/
+/release/
+*.safetensors
+*.bin
+*.pt
+*.pkl
+
+# Data is not part of this repository
+/data/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.env
+.pytest_cache/
+
+# Recordings before conversion
+media/*.webm
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.log

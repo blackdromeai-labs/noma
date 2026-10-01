@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 668" width="960" height="668" role="img">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+    <stop offset="0" stop-color="#08243B"/><stop offset="0.6" stop-color="#12507A"/><stop offset="1" stop-color="#1C6E8E"/>
+  </linearGradient>
+  <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2E8FA6"/><stop offset="1" stop-color="#7DD0C0"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.85" cy="0.1" r="0.7">
+    <stop offset="0" stop-color="#7DD0C0" stop-opacity="0.22"/><stop offset="1" stop-color="#7DD0C0" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="960" height="668" rx="18" fill="url(#bg)"/>
+<rect width="960" height="668" rx="18" fill="url(#glow)"/>
+<text x="48" y="56" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#7DD0C0" text-anchor="start" font-weight="600" letter-spacing="3">SEALED SET</text>
+<text x="48" y="96" font-family="Playfair Display, Georgia, 'Times New Roman', serif" font-size="30" fill="#F7F5EF" text-anchor="start" font-weight="400" >Accuracy by decision family</text>
+<text x="48" y="124" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#A9C6D2" text-anchor="start" font-weight="400" >386 held-out, human-reviewed decisions.</text>
+<text x="282" y="175" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Ambiguous / out of scope</text>
+<rect x="300" y="158" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="158" width="480" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="175" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >16/17</text>
+<text x="282" y="215" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Intent</text>
+<rect x="300" y="198" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="198" width="480" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="215" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >32/34</text>
+<text x="282" y="255" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Enum pick</text>
+<rect x="300" y="238" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="238" width="479" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="255" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >31/33</text>
+<text x="282" y="295" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Tone and safety</text>
+<rect x="300" y="278" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="278" width="478" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="295" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >30/32</text>
+<text x="282" y="335" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Severity</text>
+<rect x="300" y="318" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="318" width="465" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="335" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >31/34</text>
+<text x="282" y="375" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Adversarial</text>
+<rect x="300" y="358" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="358" width="435" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="375" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >29/34</text>
+<text x="282" y="415" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Policy</text>
+<rect x="300" y="398" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="398" width="435" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="415" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >29/34</text>
+<text x="282" y="455" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Routing</text>
+<rect x="300" y="438" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="438" width="433" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="455" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >28/33</text>
+<text x="282" y="495" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Adequacy</text>
+<rect x="300" y="478" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="478" width="405" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="495" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >27/34</text>
+<text x="282" y="535" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Relevance</text>
+<rect x="300" y="518" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="518" width="386" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="535" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >25/33</text>
+<text x="282" y="575" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Trade-off</text>
+<rect x="300" y="558" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="558" width="360" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="575" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >24/34</text>
+<text x="282" y="615" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Temporal / numeric</text>
+<rect x="300" y="598" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="598" width="255" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="615" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >17/34</text>
+</svg>

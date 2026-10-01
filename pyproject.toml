@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noma"
+version = "1.0.0"
+description = "Noma: an open, calibrated decision model for agents and pipelines, by Blackdrome AI Labs"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MPL-2.0" }
+authors = [{ name = "Blackdrome AI Labs", email = "hello@blackdrome.tech" }]
+keywords = ["decision model", "classification", "calibration", "agents", "systemone"]
+dependencies = [
+  "torch>=2.6",
+  "transformers>=5.17",
+  "safetensors>=0.4",
+  "huggingface_hub>=0.30",
+  "fastapi>=0.110",
+  "uvicorn>=0.30",
+]
+
+[project.optional-dependencies]
+fast = ["flash-linear-attention", "triton>=3.7"]   # optimised linear-attention kernels (Linux, NVIDIA)
+train = ["peft>=0.21", "accelerate", "numpy>=1.26", "datasets>=3.0"]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[project.scripts]
+noma = "noma.cli:main"
+
+[project.urls]
+Homepage = "https://blackdromeai.vercel.app/"
+Repository = "https://github.com/blackdromeai-labs/noma"
+Model = "https://huggingface.co/BlackdromeAILabs/noma"
+
+[tool.setuptools.packages.find]
+include = ["noma*"]
+
+[tool.setuptools.package-data]
+"noma.serve" = ["static/*"]

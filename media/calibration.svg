@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 308" width="960" height="308" role="img">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+    <stop offset="0" stop-color="#08243B"/><stop offset="0.6" stop-color="#12507A"/><stop offset="1" stop-color="#1C6E8E"/>
+  </linearGradient>
+  <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2E8FA6"/><stop offset="1" stop-color="#7DD0C0"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.85" cy="0.1" r="0.7">
+    <stop offset="0" stop-color="#7DD0C0" stop-opacity="0.22"/><stop offset="1" stop-color="#7DD0C0" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="960" height="308" rx="18" fill="url(#bg)"/>
+<rect width="960" height="308" rx="18" fill="url(#glow)"/>
+<text x="48" y="56" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#7DD0C0" text-anchor="start" font-weight="600" letter-spacing="3">CALIBRATION</text>
+<text x="48" y="96" font-family="Playfair Display, Georgia, 'Times New Roman', serif" font-size="30" fill="#F7F5EF" text-anchor="start" font-weight="400" >Probabilities you can threshold</text>
+<text x="48" y="124" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#A9C6D2" text-anchor="start" font-weight="400" >Expected calibration error (ECE). Bar shows 1 - ECE; closer to full is better.</text>
+<text x="282" y="175" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >JevBench easy</text>
+<rect x="300" y="158" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="158" width="504" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="175" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >ECE 0.011</text>
+<text x="282" y="215" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >Sealed set</text>
+<rect x="300" y="198" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="198" width="489" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="215" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >ECE 0.042</text>
+<text x="282" y="255" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#F7F5EF" text-anchor="end" font-weight="400" >JevBench original</text>
+<rect x="300" y="238" width="510" height="24" rx="12" fill="#F7F5EF" fill-opacity="0.08"/>
+<rect x="300" y="238" width="467" height="24" rx="12" fill="url(#bar)"/>
+<text x="824" y="255" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#7DD0C0" text-anchor="start" font-weight="500" >ECE 0.084</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1136 520" width="1136" height="520" role="img">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+    <stop offset="0" stop-color="#08243B"/><stop offset="0.6" stop-color="#12507A"/><stop offset="1" stop-color="#1C6E8E"/>
+  </linearGradient>
+  <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2E8FA6"/><stop offset="1" stop-color="#7DD0C0"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.85" cy="0.1" r="0.7">
+    <stop offset="0" stop-color="#7DD0C0" stop-opacity="0.22"/><stop offset="1" stop-color="#7DD0C0" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="1136" height="520" rx="18" fill="url(#bg)"/>
+<rect width="1136" height="520" rx="18" fill="url(#glow)"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7DD0C0"/></marker></defs>
+<text x="48" y="56" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#7DD0C0" text-anchor="start" font-weight="600" letter-spacing="3">ARCHITECTURE</text>
+<text x="48" y="96" font-family="Playfair Display, Georgia, 'Times New Roman', serif" font-size="30" fill="#F7F5EF" text-anchor="start" font-weight="400" >One forward pass, no decoding</text>
+<text x="48" y="124" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#A9C6D2" text-anchor="start" font-weight="400" >The state is read once; every question forks from its cache.</text>
+<rect x="48" y="160" width="210" height="150" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.22"/>
+<text x="66" y="190" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#F7F5EF" text-anchor="start" font-weight="600" >Request</text>
+<text x="66" y="214" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >state (text or JSON)</text>
+<text x="66" y="233" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >questions</text>
+<text x="66" y="252" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >  choice · yes/no · score</text>
+<text x="66" y="271" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >reference_time</text>
+<rect x="298" y="160" width="210" height="150" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.22"/>
+<text x="316" y="190" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#F7F5EF" text-anchor="start" font-weight="600" >Fact channel</text>
+<text x="316" y="214" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >dates, durations,</text>
+<text x="316" y="233" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >totals, thresholds</text>
+<text x="316" y="252" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >as short fact lines</text>
+<text x="316" y="271" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >deterministic</text>
+<rect x="548" y="160" width="250" height="150" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.7"/>
+<text x="566" y="190" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#7DD0C0" text-anchor="start" font-weight="600" >Backbone</text>
+<text x="566" y="214" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >Qwen3.5-4B, layers 1-18</text>
+<text x="566" y="233" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >of 32 (56% of depth)</text>
+<text x="566" y="252" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >LoRA merged</text>
+<text x="566" y="271" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >state cache forked per question</text>
+<rect x="838" y="160" width="250" height="150" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.7"/>
+<text x="856" y="190" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#7DD0C0" text-anchor="start" font-weight="600" >Decision heads</text>
+<text x="856" y="214" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >listwise option scorer</text>
+<text x="856" y="233" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >4-head ensemble</text>
+<text x="856" y="252" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >abstain head</text>
+<text x="856" y="271" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >evidence head</text>
+<rect x="838" y="350" width="250" height="130" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.22"/>
+<text x="856" y="380" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#F7F5EF" text-anchor="start" font-weight="600" >Answer</text>
+<text x="856" y="404" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >probabilities (sum to 1)</text>
+<text x="856" y="423" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >abstain probability</text>
+<text x="856" y="442" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >ensemble uncertainty</text>
+<text x="856" y="461" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >0 output tokens</text>
+<rect x="548" y="350" width="250" height="130" rx="14" fill="#08243B" fill-opacity="0.55" stroke="#7DD0C0" stroke-opacity="0.22"/>
+<text x="566" y="380" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#F7F5EF" text-anchor="start" font-weight="600" >Fast path</text>
+<text x="566" y="404" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >length buckets (128)</text>
+<text x="566" y="423" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >CUDA graph per bucket</text>
+<text x="566" y="442" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >no host-device syncs</text>
+<text x="566" y="461" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >14 ms model time (H100)</text>
+<line x1="258" y1="235" x2="296" y2="235" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" marker-end="url(#ah)"/>
+<line x1="508" y1="235" x2="546" y2="235" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" marker-end="url(#ah)"/>
+<line x1="798" y1="235" x2="836" y2="235" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" marker-end="url(#ah)"/>
+<line x1="963" y1="310" x2="963" y2="348" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" marker-end="url(#ah)"/>
+<line x1="673" y1="348" x2="673" y2="312" stroke="#7DD0C0" stroke-width="1.6" stroke-opacity="0.8" marker-end="url(#ah)"/>
+</svg>

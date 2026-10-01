@@ -1,0 +1,8 @@
+Noma
+Copyright (c) 2026 Blackdrome AI Labs
+Licensed under the Mozilla Public License 2.0 (see LICENSE).
+
+Noma's weights are derived from Qwen3.5-4B-Base, released under the Apache License 2.0.
+The first 18 transformer layers and the token embeddings of that model are included in
+Noma's weights, with a low-rank adapter merged in. The Qwen tokenizer is redistributed
+with added special tokens.

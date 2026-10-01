@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use Noma, please cite it as below."
+title: "Noma: an open, calibrated decision model"
+authors:
+  - name: "Blackdrome AI Labs"
+    email: hello@blackdrome.tech
+year: 2026
+license: MPL-2.0
+repository-code: "https://github.com/blackdromeai-labs/noma"
+url: "https://huggingface.co/BlackdromeAILabs/noma"
