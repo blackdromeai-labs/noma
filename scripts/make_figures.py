@@ -67,25 +67,114 @@ def banner() -> str:
     return frame(1280, 360, "\n".join(b))
 
 
+def hbars(small, title, sub, rows, fmt, lo, hi, ticks, tick_fmt, w=960):
+    """Log-scale horizontal bars. rows: (name, value, ours)."""
+    b = [eyebrow(48, 56, small), text(48, 96, title, 30, PAPER, SERIF), text(48, 124, sub, 14, INK2)]
+    x0, x1, llo, lhi = 250, w - 130, math.log10(lo), math.log10(hi)
+    bottom = 170 + len(rows) * 40
+    for t in ticks:
+        x = x0 + (math.log10(t) - llo) / (lhi - llo) * (x1 - x0)
+        b.append(f'<line x1="{x:.0f}" y1="150" x2="{x:.0f}" y2="{bottom}" stroke="{PAPER}" stroke-opacity="0.08"/>')
+        b.append(text(f"{x:.0f}", bottom + 24, tick_fmt(t), 12, INK2, MONO, "middle"))
+    for i, (name, v, ours) in enumerate(rows):
+        y = 166 + i * 40
+        wd = (math.log10(v) - llo) / (lhi - llo) * (x1 - x0)
+        b.append(text(x0 - 18, y + 18, name, 15.5, PAPER if ours else INK2, SANS, "end", 600 if ours else 400))
+        b.append(f'<rect x="{x0}" y="{y}" width="{wd:.0f}" height="26" rx="13" '
+                 f'fill="{"url(#bar)" if ours else PAPER}" fill-opacity="{"1" if ours else "0.22"}"/>')
+        b.append(text(x0 + wd + 12, y + 18, fmt(v), 14.5, REEF if ours else INK2, MONO, weight=500))
+    return frame(w, bottom + 50, "\n".join(b))
+
+
 def latency() -> str:
     rows = [("Noma", 16, True), ("decider-4b v2", 17, False), ("Cygnet", 35, False),
-            ("Nimble 9B", 389, False), ("Jev 1.13.0", 652, False)]
-    b = [eyebrow(48, 56, "Latency"), text(48, 96, "Median time per decision", 30, PAPER, SERIF),
-         text(48, 124, "End to end over HTTP, JevBench client, public tasks. Log scale. Lower is better.", 14, INK2)]
-    x0, x1, lo, hi = 230, 860, math.log10(8), math.log10(1000)
-    for t in (10, 30, 100, 300, 1000):
-        x = x0 + (math.log10(t) - lo) / (hi - lo) * (x1 - x0)
-        b.append(f'<line x1="{x:.0f}" y1="150" x2="{x:.0f}" y2="400" stroke="{PAPER}" stroke-opacity="0.08"/>')
-        b.append(text(f"{x:.0f}", 424, f"{t} ms", 12, INK2, MONO, "middle"))
-    for i, (name, ms, ours) in enumerate(rows):
-        y = 170 + i * 46
-        wd = (math.log10(ms) - lo) / (hi - lo) * (x1 - x0)
-        b.append(text(x0 - 18, y + 19, name, 16, PAPER if ours else INK2, SANS, "end", 600 if ours else 400))
-        fill = "url(#bar)" if ours else PAPER
-        op = "1" if ours else "0.22"
-        b.append(f'<rect x="{x0}" y="{y}" width="{wd:.0f}" height="28" rx="14" fill="{fill}" fill-opacity="{op}"/>')
-        b.append(text(x0 + wd + 12, y + 19, f"{ms} ms", 15, REEF if ours else INK2, MONO, weight=500))
-    return frame(960, 450, "\n".join(b))
+            ("NInfer Flash-Next", 79, False), ("JevOne", 87, False), ("Nimble 9B", 389, False),
+            ("OpenJev (thinking)", 463, False), ("Jev 1.13.0", 652, False)]
+    return hbars("Latency", "Median time per decision",
+                 "End to end over HTTP, JevBench client, one question per request. Log scale. Lower is better.",
+                 rows, lambda v: f"{v} ms", 8, 1000, (10, 30, 100, 300, 1000), lambda t: f"{t} ms")
+
+
+def cost() -> str:
+    rows = [("decider-4b v2", 0.020, False), ("Noma", 0.023, True), ("Cygnet", 0.037, False),
+            ("Jev 1.13.0", 0.040, False), ("Nimble 9B", 0.166, False)]
+    return hbars("Cost", "Cost per 1,000 decisions",
+                 "JevBench method: input tokens x hosted price for the size class. Log scale. Lower is better.",
+                 rows, lambda v: f"${v:.3f}", 0.01, 0.25, (0.01, 0.02, 0.05, 0.1, 0.2), lambda t: f"${t:g}")
+
+
+def panel(x, y, w, title, sub, groups, series, vmax=100):
+    """Grouped vertical bars. groups: (label, [values]); series: [(name, colour, opacity)]."""
+    h = 190
+    b = [f'<rect x="{x}" y="{y}" width="{w}" height="{h + 150}" rx="14" fill="{ABYSS}" fill-opacity="0.5" '
+         f'stroke="{REEF}" stroke-opacity="0.2"/>',
+         text(x + 20, y + 32, title, 17, PAPER, SANS, weight=600), text(x + 20, y + 52, sub, 12, INK2, MONO)]
+    base = y + 80 + h
+    gw = (w - 40) / len(groups)
+    bw = min(46, gw / (len(series) + 1))
+    for gi, (label, vals) in enumerate(groups):
+        cx = x + 20 + gw * (gi + 0.5)
+        for si, v in enumerate(vals):
+            bx = cx - bw * len(vals) / 2 + si * bw
+            bh = h * v / vmax
+            _, col, op = series[si]
+            b.append(f'<rect x="{bx + 3:.0f}" y="{base - bh:.0f}" width="{bw - 6:.0f}" height="{bh:.0f}" rx="5" fill="{col}" fill-opacity="{op}"/>')
+            b.append(text(f"{bx + bw / 2:.0f}", f"{base - bh - 7:.0f}", f"{v:g}", 11.5, PAPER, MONO, "middle"))
+        for li, ln in enumerate(label.split("|")):
+            b.append(text(f"{cx:.0f}", base + 20 + li * 16, ln, 12.5, INK2, SANS, "middle"))
+    b.append(f'<line x1="{x + 20}" y1="{base}" x2="{x + w - 20}" y2="{base}" stroke="{PAPER}" stroke-opacity="0.25"/>')
+    return "\n".join(b)
+
+
+def ablations() -> str:
+    S2 = [("Sealed set", "url(#barv)", 1), ("Hard tier", PAPER, 0.3)]
+    b = [f'<defs><linearGradient id="barv" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="{TEAL}"/>'
+         f'<stop offset="1" stop-color="{REEF}"/></linearGradient></defs>',
+         eyebrow(48, 56, "Ablations"), text(48, 96, "What moved the numbers, and what did not", 30, PAPER, SERIF),
+         text(48, 124, "Accuracy in %. One change per panel; recipe, data and budget otherwise fixed.", 14, INK2),
+         f'<rect x="760" y="80" width="14" height="14" rx="3" fill="url(#barv)"/>', text(782, 92, "Sealed set", 13, INK2),
+         f'<rect x="880" y="80" width="14" height="14" rx="3" fill="{PAPER}" fill-opacity="0.3"/>',
+         text(902, 92, "Hard tier (multi-step)", 13, INK2),
+         panel(48, 150, 400, "Depth and size", "same 6,000 items",
+               [("4B|18 of 32 layers", [79.5, 50.5]), ("4B|32 of 32 layers", [80.1, 53.2]), ("9B|16 of 32 layers", [76.2, 53.2])], S2),
+         panel(468, 150, 280, "Training set size", "4B, 18 layers",
+               [("6,000|items", [79.5, 50.5]), ("32,000|items", [79.8, 50.5])], S2),
+         panel(768, 150, 300, "Targeted multi-step data", "hard tier = held-out half",
+               [("before", [79.8, 46.4]), ("+3,500|generated items", [82.6, 46.4])], S2),
+         text(48, 520, "Half the depth and half the size lose nothing. More data lifts the sealed set, not the multi-step tier.", 13.5, INK2)]
+    return frame(1116, 548, "\n".join(b))
+
+
+def speed_path() -> str:
+    rows = [("First working server", 2300, False), ("Fast path (released)", 14, True)]
+    return hbars("Serving ablation", "What the fast path buys",
+                 "Time per decision before and after: prefix fork, length buckets, CUDA graph per bucket. Log scale.",
+                 rows, lambda v: f"{v:,} ms", 8, 4000, (10, 100, 1000), lambda t: f"{t:,} ms")
+
+
+def decision_head() -> str:
+    def tok(x, y, w, label, hot=False):
+        return (f'<rect x="{x}" y="{y}" width="{w}" height="30" rx="7" fill="{REEF if hot else PAPER}" '
+                f'fill-opacity="{0.9 if hot else 0.1}"/>' + text(x + w / 2, y + 20, label, 12, ABYSS if hot else INK2, MONO, "middle"))
+    b = [ARROW_DEF, eyebrow(48, 56, "Decision head"), text(48, 96, "From tokens to a calibrated answer", 30, PAPER, SERIF),
+         text(48, 124, "Hidden states are read only at the marked positions. Nothing is decoded.", 14, INK2),
+         text(48, 172, "prefix (run once, cache forked)", 12, REEF, MONO), text(560, 172, "one block per question", 12, REEF, MONO),
+         tok(48, 184, 110, "ref time"), tok(164, 184, 90, "facts"), tok(260, 184, 280, "state ..."),
+         tok(560, 184, 130, "instructions"), tok(696, 184, 44, "/q", True), tok(746, 184, 90, "option A"), tok(842, 184, 50, "mark", True),
+         tok(898, 184, 90, "option B"), tok(994, 184, 50, "mark", True), tok(1050, 184, 60, "abstain", True),
+         box(48, 250, 1062, 64, "Backbone: Qwen3.5-4B, layers 1-18 (Gated DeltaNet + attention), LoRA merged", []),
+         arrow(718, 214, 718, 248), arrow(867, 214, 867, 248), arrow(1019, 214, 1019, 248), arrow(1080, 214, 1080, 248)]
+    for i in range(4):
+        b.append(box(560 + i * 140, 356, 126, 70, f"Scorer {i + 1}", ["listwise"], True))
+        b.append(arrow(623 + i * 140, 314, 623 + i * 140, 354))
+    b += [box(48, 356, 470, 70, "Evidence head", ["per token: which span of the state decides the answer"]),
+          arrow(283, 314, 283, 354),
+          box(560, 470, 266, 96, "Mean of the four", ["option probabilities (sum to 1)", "temperature per question type"], True),
+          box(844, 470, 266, 96, "Their disagreement", ["uncertainty", "abstain: its own probability"], True),
+          arrow(693, 426, 693, 468), arrow(977, 426, 977, 468),
+          text(48, 500, "Each scorer trains on its own Poisson", 13, INK2), text(48, 520, "bootstrap of the data; all four share", 13, INK2),
+          text(48, 540, "one backbone pass.", 13, INK2)]
+    return frame(1158, 600, "\n".join(b))
 
 
 def bars(title_small, title, sub, rows, w=960) -> str:
@@ -152,6 +241,10 @@ def agent_loop() -> str:
 FIGURES = {
     "banner.svg": banner,
     "latency.svg": latency,
+    "cost.svg": cost,
+    "ablations.svg": ablations,
+    "speed-path.svg": speed_path,
+    "decision-head.svg": decision_head,
     "architecture.svg": architecture,
     "agent-loop.svg": agent_loop,
     "accuracy.svg": lambda: bars(

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1116 548" width="1116" height="548" role="img">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+    <stop offset="0" stop-color="#08243B"/><stop offset="0.6" stop-color="#12507A"/><stop offset="1" stop-color="#1C6E8E"/>
+  </linearGradient>
+  <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2E8FA6"/><stop offset="1" stop-color="#7DD0C0"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.85" cy="0.1" r="0.7">
+    <stop offset="0" stop-color="#7DD0C0" stop-opacity="0.22"/><stop offset="1" stop-color="#7DD0C0" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="1116" height="548" rx="18" fill="url(#bg)"/>
+<rect width="1116" height="548" rx="18" fill="url(#glow)"/>
+<defs><linearGradient id="barv" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#2E8FA6"/><stop offset="1" stop-color="#7DD0C0"/></linearGradient></defs>
+<text x="48" y="56" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#7DD0C0" text-anchor="start" font-weight="600" letter-spacing="3">ABLATIONS</text>
+<text x="48" y="96" font-family="Playfair Display, Georgia, 'Times New Roman', serif" font-size="30" fill="#F7F5EF" text-anchor="start" font-weight="400" >What moved the numbers, and what did not</text>
+<text x="48" y="124" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#A9C6D2" text-anchor="start" font-weight="400" >Accuracy in %. One change per panel; recipe, data and budget otherwise fixed.</text>
+<rect x="760" y="80" width="14" height="14" rx="3" fill="url(#barv)"/>
+<text x="782" y="92" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#A9C6D2" text-anchor="start" font-weight="400" >Sealed set</text>
+<rect x="880" y="80" width="14" height="14" rx="3" fill="#F7F5EF" fill-opacity="0.3"/>
+<text x="902" y="92" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#A9C6D2" text-anchor="start" font-weight="400" >Hard tier (multi-step)</text>
+<rect x="48" y="150" width="400" height="340" rx="14" fill="#08243B" fill-opacity="0.5" stroke="#7DD0C0" stroke-opacity="0.2"/>
+<text x="68" y="182" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" fill="#F7F5EF" text-anchor="start" font-weight="600" >Depth and size</text>
+<text x="68" y="202" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#A9C6D2" text-anchor="start" font-weight="400" >same 6,000 items</text>
+<rect x="91" y="269" width="34" height="151" rx="5" fill="url(#barv)" fill-opacity="1"/>
+<text x="108" y="262" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >79.5</text>
+<rect x="131" y="324" width="34" height="96" rx="5" fill="#F7F5EF" fill-opacity="0.3"/>
+<text x="148" y="317" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >50.5</text>
+<text x="128" y="440" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >4B</text>
+<text x="128" y="456" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >18 of 32 layers</text>
+<rect x="211" y="268" width="34" height="152" rx="5" fill="url(#barv)" fill-opacity="1"/>
+<text x="228" y="261" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >80.1</text>
+<rect x="251" y="319" width="34" height="101" rx="5" fill="#F7F5EF" fill-opacity="0.3"/>
+<text x="268" y="312" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >53.2</text>
+<text x="248" y="440" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >4B</text>
+<text x="248" y="456" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >32 of 32 layers</text>
+<rect x="331" y="275" width="34" height="145" rx="5" fill="url(#barv)" fill-opacity="1"/>
+<text x="348" y="268" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >76.2</text>
+<rect x="371" y="319" width="34" height="101" rx="5" fill="#F7F5EF" fill-opacity="0.3"/>
+<text x="388" y="312" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >53.2</text>
+<text x="368" y="440" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >9B</text>
+<text x="368" y="456" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >16 of 32 layers</text>
+<line x1="68" y1="420" x2="428" y2="420" stroke="#F7F5EF" stroke-opacity="0.25"/>
+<rect x="468" y="150" width="280" height="340" rx="14" fill="#08243B" fill-opacity="0.5" stroke="#7DD0C0" stroke-opacity="0.2"/>
+<text x="488" y="182" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" fill="#F7F5EF" text-anchor="start" font-weight="600" >Training set size</text>
+<text x="488" y="202" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#A9C6D2" text-anchor="start" font-weight="400" >4B, 18 layers</text>
+<rect x="511" y="269" width="34" height="151" rx="5" fill="url(#barv)" fill-opacity="1"/>
+<text x="528" y="262" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >79.5</text>
+<rect x="551" y="324" width="34" height="96" rx="5" fill="#F7F5EF" fill-opacity="0.3"/>
+<text x="568" y="317" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >50.5</text>
+<text x="548" y="440" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >6,000</text>
+<text x="548" y="456" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >items</text>
+<rect x="631" y="268" width="34" height="152" rx="5" fill="url(#barv)" fill-opacity="1"/>
+<text x="648" y="261" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >79.8</text>
+<rect x="671" y="324" width="34" height="96" rx="5" fill="#F7F5EF" fill-opacity="0.3"/>
+<text x="688" y="317" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >50.5</text>
+<text x="668" y="440" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >32,000</text>
+<text x="668" y="456" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >items</text>
+<line x1="488" y1="420" x2="728" y2="420" stroke="#F7F5EF" stroke-opacity="0.25"/>
+<rect x="768" y="150" width="300" height="340" rx="14" fill="#08243B" fill-opacity="0.5" stroke="#7DD0C0" stroke-opacity="0.2"/>
+<text x="788" y="182" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" fill="#F7F5EF" text-anchor="start" font-weight="600" >Targeted multi-step data</text>
+<text x="788" y="202" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#A9C6D2" text-anchor="start" font-weight="400" >hard tier = held-out half</text>
+<rect x="813" y="268" width="37" height="152" rx="5" fill="url(#barv)" fill-opacity="1"/>
+<text x="831" y="261" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >79.8</text>
+<rect x="856" y="332" width="37" height="88" rx="5" fill="#F7F5EF" fill-opacity="0.3"/>
+<text x="875" y="325" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >46.4</text>
+<text x="853" y="440" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >before</text>
+<rect x="943" y="263" width="37" height="157" rx="5" fill="url(#barv)" fill-opacity="1"/>
+<text x="961" y="256" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >82.6</text>
+<rect x="986" y="332" width="37" height="88" rx="5" fill="#F7F5EF" fill-opacity="0.3"/>
+<text x="1005" y="325" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#F7F5EF" text-anchor="middle" font-weight="400" >46.4</text>
+<text x="983" y="440" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >+3,500</text>
+<text x="983" y="456" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#A9C6D2" text-anchor="middle" font-weight="400" >generated items</text>
+<line x1="788" y1="420" x2="1048" y2="420" stroke="#F7F5EF" stroke-opacity="0.25"/>
+<text x="48" y="520" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13.5" fill="#A9C6D2" text-anchor="start" font-weight="400" >Half the depth and half the size lose nothing. More data lifts the sealed set, not the multi-step tier.</text>
+</svg>

@@ -48,6 +48,8 @@ found a 9B backbone no better than the 4B one for this task. Numbers are in
 
 The language-model head is removed. In its place:
 
+<p align="center"><img src="../media/decision-head.svg" alt="Decision head" width="100%"></p>
+
 **Listwise option scorer.** For each question the hidden states at the question's end token
 and at each option's marker are gathered and passed to a small bidirectional transformer
 (2 layers, width 512). It sees all options at once and scores them against each other, which

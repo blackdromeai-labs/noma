@@ -86,7 +86,7 @@ network round trip takes.
 ## Fast
 
 <p align="center">
-  <img src="media/latency.svg" alt="Median latency per decision: Noma 16 ms, decider-4b v2 17 ms, Cygnet 35 ms, Nimble 9B 389 ms, Jev 1.13.0 652 ms" width="82%">
+  <img src="media/latency.svg" alt="Median latency per decision: Noma 16 ms, decider-4b v2 17 ms, Cygnet 35 ms, NInfer Flash-Next 79 ms, JevOne 87 ms, Nimble 9B 389 ms, OpenJev 463 ms, Jev 1.13.0 652 ms" width="82%">
 </p>
 
 Measured with JevBench's own client over HTTP, one question per request, on the 231 public
@@ -95,9 +95,58 @@ questions at once take a little longer in total and less per question. Other mod
 the ones published on the JevBench leaderboard. Details and hardware in
 [docs/EVALUATION.md](docs/EVALUATION.md).
 
-At that speed one GPU handles roughly 225,000 decisions an hour in a single serial stream,
-which works out to about **$0.01 to $0.03 per 1,000 decisions** at current on-demand GPU
-prices. You run it yourself, so there is no per-call fee.
+## Cheap
+
+<p align="center">
+  <img src="media/cost.svg" alt="Cost per 1,000 decisions: decider-4b v2 $0.020, Noma $0.023, Cygnet $0.037, Jev 1.13.0 $0.040, Nimble 9B $0.166" width="82%">
+</p>
+
+| | Cost per 1,000 decisions | Basis |
+|---|---|---|
+| decider-4b v2 | $0.020 | JevBench estimate |
+| **Noma** | **$0.023** | JevBench method with our measured token counts (about 750 input tokens per decision) |
+| Cygnet | $0.037 | JevBench estimate |
+| Jev 1.13.0 | $0.040 | TypeSafe's public price |
+| Nimble 9B | $0.166 | JevBench estimate |
+
+JevBench prices a system as input tokens times the hosted price for its size class, which
+puts every model on the same footing. Noma comes out at a little over half the price of Jev.
+
+The second way to count is what it costs to run yourself. On the H100 we measured on
+($5.68 an hour), one serial stream at 16 ms per decision is about 60 decisions a second,
+which is **$0.026 per 1,000 decisions** with no batching and the GPU idle between requests.
+Concurrent traffic or a cheaper GPU brings that down. The weights are free, so that is the
+whole bill.
+
+## How it compares
+
+| Model | Base | Easy | Standard | All public | Hard tier | Median latency | Cost per 1k |
+|---|---|---|---|---|---|---|---|
+| **Noma** | Qwen3.5-4B, 18 of 32 layers | **100%** | **98.6%** | 76.2% | 51.4% (46.4% held-out) | **16 ms** | **$0.023** |
+| decider-4b v2 | 4B | 100% | 96.9% | 83.5% | 67.3% | 17 ms | $0.020 |
+| Cygnet | frozen Gemma-4-12B | 100% | 96.9% | 87.9% | 75.5% | 35 ms | $0.037 |
+| NInfer Flash-Next | large MoE | 100% | 99.0% | 89.6% | 77.3% | 79 ms | |
+| JevOne | not disclosed | 100% | 96.9% | 89.6% | 75.0% | 87 ms | |
+| Decision 2B | MiniCPM5-2B | 100% | | 75.3% | 58.2% | 189 ms | |
+| decider-2b | 2B | | | 71.0% | 47.3% | 261 ms | |
+| spark-s1-4b | Qwen3.5-4B | 100% | | 79.2% | 60.0% | 314 ms | |
+| classifier.dev (fast) | Jev-based | 100% | 99.0% | 85.3% | 70.5% | 386 ms | |
+| Nimble 9B | Qwen3.5-9B | 100% | 94.8% | 79.7% | 65.5% | 389 ms | $0.166 |
+| OpenJev (thinking) | 26B MoE, generates reasoning | 100% | 100% | 88.7% | 78.2% | 463 ms | |
+| kev 0.6B | 0.6B | 100% | 81.3% | 66.7% | 40.0% | 590 ms | |
+| Jev 1.13.0 | not disclosed | 100% | 99.0% | 86.6% | 74.1% | 652 ms | $0.040 |
+| Laya | ModernBERT 0.4B | | | 58.4% | 34.1% | 787 ms | |
+| reflex 4B | 4B | 100% | | 79.2% | 63.2% | 1.8 s | |
+
+Sorted by latency. Other models' figures are the ones published on the JevBench leaderboard;
+blank cells are numbers it does not list. Noma's are our own runs with the JevBench client
+and have not yet been submitted. Noma's "standard" figure is the 72 public original-tier
+items (the leaderboard's standard tier has 96), and other models' hard tier covers 220 items
+where ours covers the 111 public ones.
+
+Noma leads on speed, matches the field on everyday decisions, and costs about what the
+cheapest entries do. The hard tier is multi-step reasoning, which Noma leaves to a reasoning
+model by design; see [Scope](#scope) and [docs/EVALUATION.md](docs/EVALUATION.md).
 
 ## Calibrated
 
@@ -182,8 +231,36 @@ small decision heads. What is new in it:
 4. **Blind, agreement-gated labelling.** Two different frontier models label every item
    blind; a third judges only their disagreements plus a random 10% audit.
 
-The full list, with the supporting methods and the controlled experiments behind each
-choice, is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/TRAINING.md](docs/TRAINING.md).
+<p align="center">
+  <img src="media/decision-head.svg" alt="Decision head: hidden states at the marked positions feed four listwise scorers; their mean is the answer and their disagreement is the uncertainty" width="100%">
+</p>
+
+The full list, with the supporting methods, is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+and [docs/TRAINING.md](docs/TRAINING.md).
+
+## Ablations
+
+Every design choice above was tested by changing one thing and holding the recipe, data and
+budget fixed.
+
+<p align="center">
+  <img src="media/ablations.svg" alt="Ablations: depth and size, training set size, targeted multi-step data" width="100%">
+</p>
+
+| Change | Sealed set | Hard tier | Reading |
+|---|---|---|---|
+| 4B, 18 of 32 layers (released design) | 79.5% | 50.5% | baseline, 6,000 items |
+| 4B, all 32 layers | 80.1% | 53.2% | nearly twice the compute, within noise |
+| 9B, 16 of 32 layers | 76.2% | 53.2% | a bigger backbone does not help |
+| 6,000 to 32,000 training items | 79.5% to 79.8% | 50.5% to 50.5% | accuracy saturates early |
+| + 3,500 targeted multi-step items | 79.8% to 82.6% | 46.4% to 46.4% (held-out) | lifts everyday decisions, not multi-step ones |
+
+<p align="center">
+  <img src="media/speed-path.svg" alt="Serving ablation: 2,300 ms for the first working server, 14 ms with the fast path" width="82%">
+</p>
+
+The cut and the fast path are where the speed comes from, and neither costs accuracy.
+Methods and the remaining numbers are in [docs/EVALUATION.md](docs/EVALUATION.md#controlled-experiments).
 
 ## Scope
 

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+    <stop offset="0" stop-color="#08243B"/><stop offset="0.6" stop-color="#12507A"/><stop offset="1" stop-color="#1C6E8E"/>
+  </linearGradient>
+  <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2E8FA6"/><stop offset="1" stop-color="#7DD0C0"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.85" cy="0.1" r="0.7">
+    <stop offset="0" stop-color="#7DD0C0" stop-opacity="0.22"/><stop offset="1" stop-color="#7DD0C0" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="960" height="420" rx="18" fill="url(#bg)"/>
+<rect width="960" height="420" rx="18" fill="url(#glow)"/>
+<text x="48" y="56" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#7DD0C0" text-anchor="start" font-weight="600" letter-spacing="3">COST</text>
+<text x="48" y="96" font-family="Playfair Display, Georgia, 'Times New Roman', serif" font-size="30" fill="#F7F5EF" text-anchor="start" font-weight="400" >Cost per 1,000 decisions</text>
+<text x="48" y="124" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#A9C6D2" text-anchor="start" font-weight="400" >JevBench method: input tokens x hosted price for the size class. Log scale. Lower is better.</text>
+<line x1="250" y1="150" x2="250" y2="370" stroke="#F7F5EF" stroke-opacity="0.08"/>
+<text x="250" y="394" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#A9C6D2" text-anchor="middle" font-weight="400" >$0.01</text>
+<line x1="375" y1="150" x2="375" y2="370" stroke="#F7F5EF" stroke-opacity="0.08"/>
+<text x="375" y="394" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#A9C6D2" text-anchor="middle" font-weight="400" >$0.02</text>
+<line x1="540" y1="150" x2="540" y2="370" stroke="#F7F5EF" stroke-opacity="0.08"/>
+<text x="540" y="394" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#A9C6D2" text-anchor="middle" font-weight="400" >$0.05</text>
+<line x1="665" y1="150" x2="665" y2="370" stroke="#F7F5EF" stroke-opacity="0.08"/>
+<text x="665" y="394" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#A9C6D2" text-anchor="middle" font-weight="400" >$0.1</text>
+<line x1="790" y1="150" x2="790" y2="370" stroke="#F7F5EF" stroke-opacity="0.08"/>
+<text x="790" y="394" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#A9C6D2" text-anchor="middle" font-weight="400" >$0.2</text>
+<text x="232" y="184" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15.5" fill="#A9C6D2" text-anchor="end" font-weight="400" >decider-4b v2</text>
+<rect x="250" y="166" width="125" height="26" rx="13" fill="#F7F5EF" fill-opacity="0.22"/>
+<text x="386.89620184128404" y="184" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14.5" fill="#A9C6D2" text-anchor="start" font-weight="500" >$0.020</text>
+<text x="232" y="224" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15.5" fill="#F7F5EF" text-anchor="end" font-weight="600" >Noma</text>
+<rect x="250" y="206" width="150" height="26" rx="13" fill="url(#bar)" fill-opacity="1"/>
+<text x="412.0795052639661" y="224" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14.5" fill="#7DD0C0" text-anchor="start" font-weight="500" >$0.023</text>
+<text x="232" y="264" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15.5" fill="#A9C6D2" text-anchor="end" font-weight="400" >Cygnet</text>
+<rect x="250" y="246" width="236" height="26" rx="13" fill="#F7F5EF" fill-opacity="0.22"/>
+<text x="497.7447371950655" y="264" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14.5" fill="#A9C6D2" text-anchor="start" font-weight="500" >$0.037</text>
+<text x="232" y="304" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15.5" fill="#A9C6D2" text-anchor="end" font-weight="400" >Jev 1.13.0</text>
+<rect x="250" y="286" width="250" height="26" rx="13" fill="#F7F5EF" fill-opacity="0.22"/>
+<text x="511.7924036825681" y="304" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14.5" fill="#A9C6D2" text-anchor="start" font-weight="500" >$0.040</text>
+<text x="232" y="344" font-family="Quicksand, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15.5" fill="#A9C6D2" text-anchor="end" font-weight="400" >Nimble 9B</text>
+<rect x="250" y="326" width="506" height="26" rx="13" fill="#F7F5EF" fill-opacity="0.22"/>
+<text x="768.2182115636498" y="344" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="14.5" fill="#A9C6D2" text-anchor="start" font-weight="500" >$0.166</text>
+</svg>

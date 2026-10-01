@@ -9,6 +9,7 @@ experiments behind it.
 |---|---|
 | Latency, end to end (H100, JevBench client, 231 public tasks) | **16 ms median** |
 | Latency, model only (H100) | 14 ms short states, 41 ms long states |
+| Cost per 1,000 decisions | $0.023 by JevBench's method; $0.026 self-hosted on the measured H100 |
 | JevBench easy | **48/48** (100%), ECE 0.011 |
 | JevBench original | **71/72** (98.6%), ECE 0.084 |
 | Sealed set, 12 families | **319/386** (82.6%), ECE 0.042 |
@@ -35,22 +36,46 @@ hardware: 21 ms (short) and 80 ms (long) on an A100 40GB.
 
 <p align="center"><img src="../media/latency.svg" alt="Latency comparison" width="80%"></p>
 
-| Model | Open weights | Public tasks | Hard tier | Median latency | Cost per 1k |
-|---|---|---|---|---|---|
-| **Noma** | yes | 76.2% | 51.4% public, 46.4% held-out | **16 ms** | about $0.01 to $0.03, self-hosted |
-| Jev 1.13.0 | no | 86.6% | 74.1% | 652 ms | $0.040 |
-| decider-4b v2 | | | 67.3% | 17 ms | $0.020 |
-| Cygnet | | | 75.5% | 35 ms | |
-| Nimble 9B | yes | | 65.5% | 389 ms | |
-| OpenJev (thinking) | yes | | 78.2% | | |
+| Model | Base | Easy | Standard | All public | Hard tier | Median latency | Cost per 1k |
+|---|---|---|---|---|---|---|---|
+| **Noma** | Qwen3.5-4B, 18 of 32 layers | **100%** | **98.6%** | 76.2% | 51.4% (46.4% held-out) | **16 ms** | **$0.023** |
+| decider-4b v2 | 4B | 100% | 96.9% | 83.5% | 67.3% | 17 ms | $0.020 |
+| Cygnet | frozen Gemma-4-12B | 100% | 96.9% | 87.9% | 75.5% | 35 ms | $0.037 |
+| NInfer Flash-Next | large MoE | 100% | 99.0% | 89.6% | 77.3% | 79 ms | |
+| JevOne | not disclosed | 100% | 96.9% | 89.6% | 75.0% | 87 ms | |
+| Decision 2B | MiniCPM5-2B | 100% | | 75.3% | 58.2% | 189 ms | |
+| decider-2b | 2B | | | 71.0% | 47.3% | 261 ms | |
+| spark-s1-4b | Qwen3.5-4B | 100% | | 79.2% | 60.0% | 314 ms | |
+| classifier.dev (fast) | Jev-based | 100% | 99.0% | 85.3% | 70.5% | 386 ms | |
+| Nimble 9B | Qwen3.5-9B | 100% | 94.8% | 79.7% | 65.5% | 389 ms | $0.166 |
+| OpenJev (thinking) | 26B MoE, generates reasoning | 100% | 100% | 88.7% | 78.2% | 463 ms | |
+| kev 0.6B | 0.6B | 100% | 81.3% | 66.7% | 40.0% | 590 ms | |
+| Jev 1.13.0 | not disclosed | 100% | 99.0% | 86.6% | 74.1% | 652 ms | $0.040 |
+| Laya | ModernBERT 0.4B | | | 58.4% | 34.1% | 787 ms | |
+| reflex 4B | 4B | 100% | | 79.2% | 63.2% | 1.8 s | |
 
-Figures for other models are as published on the JevBench leaderboard at the time of
-release; blank cells are numbers we do not have. Noma's are our own measurements with the
-JevBench runner and have not yet been submitted to the leaderboard.
+Sorted by latency. Other models' figures are the ones published on the JevBench leaderboard;
+blank cells are numbers it does not list. Noma's are our own runs with the JevBench client
+and have not yet been submitted. Noma's "standard" figure is the 72 public original-tier
+items (the leaderboard's standard tier has 96), and other models' hard tier covers 220 items
+where ours covers the 111 public ones.
 
-Noma's cost is an estimate: at 16 ms per decision one GPU serves about 225,000 decisions an
-hour in a single serial stream, and on-demand H100 prices currently run from about $2 to $6
-an hour.
+### Cost
+
+<p align="center"><img src="../media/cost.svg" alt="Cost per 1,000 decisions" width="80%"></p>
+
+| | Cost per 1,000 decisions | Basis |
+|---|---|---|
+| decider-4b v2 | $0.020 | JevBench estimate |
+| **Noma** | **$0.023** | JevBench method, our token counts: about 750 input tokens per decision at $0.03 per million for the 4B class |
+| Cygnet | $0.037 | JevBench estimate |
+| Jev 1.13.0 | $0.040 | measured from TypeSafe's public price |
+| Nimble 9B | $0.166 | JevBench estimate |
+
+Noma's figure is an estimate by JevBench's method, as are the other open models'; Jev's is a
+real price. Self-hosted, the measured setup (one H100 at $5.68 an hour, one serial stream,
+about 60 decisions a second) costs **$0.026 per 1,000 decisions**. That is an upper bound for
+that GPU: nothing is batched and the GPU waits between requests.
 
 ### Reading the hard tier
 
@@ -133,6 +158,19 @@ point or two on these set sizes are inside the noise.
 | 4B | 18 of 32 | 50.5% | 79.5% |
 | 4B | 32 of 32 | 53.2% | 80.1% |
 | 9B | 16 of 32 | 53.2% | 76.2% |
+
+<p align="center"><img src="../media/ablations.svg" alt="Ablations" width="100%"></p>
+
+**Training set size** (4B, 18 layers): 6,000 items give 79.5% sealed and 50.5% hard;
+32,000 items give 79.8% and 50.5%.
+
+**Targeted multi-step data**: adding about 3,500 generated multi-step items moved the sealed
+set from 79.8% to 82.6% and left the held-out hard items at 26/56.
+
+**Serving**: the first working server took about 2.3 s per decision; the released fast path
+takes 14 ms of model time on an H100.
+
+<p align="center"><img src="../media/speed-path.svg" alt="Serving ablation" width="80%"></p>
 
 **Findings**
 
