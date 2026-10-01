@@ -273,6 +273,20 @@ layer in a system, and it is built to know when to hand off.
 - Text only. States up to 4,096 tokens.
 - Trained and evaluated in English.
 
+## What's next
+
+Two things are planned. Neither exists yet, and nothing above depends on them.
+
+- **Decisions and reasoning in one model.** Today Noma hands multi-step questions to a
+  separate reasoning model. The next version aims to do both itself: answer in a single pass
+  when that is enough, and reason step by step only when the question needs it, without
+  giving up the speed on everything else.
+- **Multimodal input.** Noma reads text only. We plan to accept images and audio as part of
+  the state, so the same typed questions can be asked of a screenshot, a scanned document or
+  a call recording.
+
+If either of these matters to what you are building, tell us: hello@blackdrome.tech
+
 ## Documentation
 
 | | |
