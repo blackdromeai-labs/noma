@@ -25,11 +25,11 @@ Jev, and ships with open weights under MPL-2.0.
 ## Try it
 
 ```bash
-pip install noma-ai
+pip install blackdrome-noma
 noma serve
 ```
 
-The package is `noma-ai` on PyPI and imports as `noma`. That downloads the weights once (one file, no base model needed), starts the API on
+The package is `blackdrome-noma` on PyPI and imports as `noma`. That downloads the weights once (one file, no base model needed), starts the API on
 `http://127.0.0.1:8000/v1/systemone`, and opens a playground at `http://127.0.0.1:8000/`.
 
 Ask it something:

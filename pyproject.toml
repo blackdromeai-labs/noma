@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "noma-ai"
+name = "blackdrome-noma"
 version = "1.0.0"
 description = "Noma: an open, calibrated decision model for agents and pipelines, by Blackdrome AI Labs"
 readme = "README.md"

@@ -3,7 +3,7 @@
 ## Start the server
 
 ```bash
-pip install noma-ai
+pip install blackdrome-noma
 noma serve                                  # weights from Hugging Face
 noma serve --model /path/to/noma            # a local copy of the weights
 noma serve --host 0.0.0.0 --port 9000       # reachable from other machines
@@ -42,7 +42,7 @@ For full speed on Linux with an NVIDIA GPU, install the optimised kernels for th
 linear-attention layers:
 
 ```bash
-pip install "noma-ai[fast]"
+pip install "blackdrome-noma[fast]"
 ```
 
 Without them the backbone uses a reference implementation that gives the same answers more

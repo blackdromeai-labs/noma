@@ -17,7 +17,7 @@ This is the recipe that produced the released weights, and the failures that sha
 | Hardware | one GPU with 40 GB; a few hours |
 
 ```bash
-pip install "noma-ai[train]"
+pip install "blackdrome-noma[train]"
 
 # encode once, off the GPU
 python -m noma.train.encode --tokenizer Qwen/Qwen3.5-4B-Base --train train.jsonl --calib calib.jsonl --out encoded.pkl --max-prefix 4096
