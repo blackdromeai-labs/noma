@@ -17,6 +17,8 @@ writes text, so there is nothing to parse and nothing to wait for.
 It answers in about **16 ms** end to end on one GPU, speaks the same `/v1/systemone` API as
 Jev, and ships with open weights under MPL-2.0.
 
+**[Overview](https://blackdrome.tech/noma)** · **[Noma compared with Jev](https://blackdrome.tech/noma/jev-alternative)** · **[Weights](https://huggingface.co/BlackdromeAILabs/noma)** · **[PyPI](https://pypi.org/project/blackdrome-noma/)**
+
 <p align="center">
   <img src="media/playground-presets.gif" alt="The Noma playground answering ticket triage, agent step checks, model routing and contract questions" width="100%">
 </p>
