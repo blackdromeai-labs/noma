@@ -50,15 +50,20 @@ slowly. That is what runs on Windows and macOS.
 
 ## The fast path
 
-Three things make the 16 ms figure:
+The server has two paths.
 
-1. **Prefix fork.** The state is run once. Its cache is copied across every question, so
-   questions are scored in parallel without re-reading the state. For the hybrid backbone
-   this includes the recurrent and convolution state of the linear-attention layers.
-2. **Length buckets.** Inputs are padded to a multiple of 128 tokens, so the server sees a
+**Single-question requests**, the case behind the 16 ms figure:
+
+1. **Length buckets.** Inputs are padded to a multiple of 128 tokens, so the server sees a
    small set of shapes.
-3. **CUDA graphs.** Each bucket is captured as a CUDA graph at start-up and replayed. This
+2. **CUDA graphs.** Each bucket is captured as a CUDA graph at start-up and replayed. This
    only became possible after removing every host-to-device sync from the forward pass.
+
+**Several questions on a long state** (more than two questions and a prefix over 1,024
+tokens) use the **prefix fork**: the state is run once and its cache is copied across every
+question, so questions are scored in parallel without re-reading the state. For the hybrid
+backbone this includes the recurrent and convolution state of the linear-attention layers.
+This path was not part of the latency measurements.
 
 The bucketed path gives the same probabilities as the plain path to within numerical noise.
 `python -m noma.serve.bench` measures both and reports the largest difference.

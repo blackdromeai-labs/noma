@@ -8,8 +8,9 @@ serving path built around the backbone's cache.
 
 ## Input
 
-A request is serialised as a **prefix** (reference time, fact lines, the state) followed by
-one **block** per question (instructions, then each option introduced by a marker token).
+A request is serialised as a **prefix** (the state, then computed fact lines; the reference
+time is the first fact line) followed by one **block** per question (instructions, then each
+option followed by a marker token, then an abstain marker and an end token).
 Nine special tokens mark these boundaries. They get their own small trained embedding table;
 the backbone's 250k-row embedding matrix stays frozen and untouched.
 
@@ -17,7 +18,7 @@ the backbone's 250k-row embedding matrix stays frozen and untouched.
 
 Language models are unreliable at date arithmetic and running totals, and a single-pass
 model has no scratchpad to work them out. Before the model reads the state, a deterministic
-preprocessor writes short fact lines above it:
+preprocessor writes short fact lines after it:
 
 - relative dates resolved against `reference_time` ("3 days ago" becomes a date);
 - elapsed real hours between timestamps, correct across daylight-saving changes;
@@ -39,9 +40,10 @@ inference.
 
 Why stop at layer 18: a layer-wise probe with a frozen backbone, followed by a fine-tuned
 comparison under an identical recipe, showed that the middle of the network carries the
-decision signal as well as the full depth does (full depth was +0.6 points, inside the
-noise). Running 56% of the layers is where most of the speed comes from. The same comparison
-found a 9B backbone no better than the 4B one for this task. Numbers are in
+decision signal as well as the full depth does. In the paper, three seeds give 79.4% on the
+sealed set at both 18 and 32 layers. The cut removes 44% of the layers; most of the latency
+reduction comes from the serving path. One earlier run with a 9B backbone scored no better
+than the 4B one (one seed, earlier data build). Numbers are in
 [EVALUATION.md](EVALUATION.md#controlled-experiments).
 
 ## Decision heads
@@ -52,8 +54,8 @@ The language-model head is removed. In its place:
 
 **Listwise option scorer.** For each question the hidden states at the question's end token
 and at each option's marker are gathered and passed to a small bidirectional transformer
-(2 layers, width 512). It sees all options at once and scores them against each other, which
-matters when two options are close. `score` questions add an ordinal embedding so the scorer
+(2 layers, width 512). It sees all options at once and scores them against each other. In the paper's ablations a
+simpler head that scores each option on its own did as well. `score` questions add an ordinal embedding so the scorer
 knows the levels are ordered.
 
 **Separate abstain output.** An extra slot stands for "none of these is supported by the
@@ -64,32 +66,37 @@ is what Jev clients expect.
 **Ensemble uncertainty.** There are four scorers on one shared backbone. Each trains on its
 own resample of the data (an online Poisson bootstrap: every item gets a Poisson(1) weight
 per head, fixed by a hash). Their mean is the answer; their disagreement is `uncertainty`.
-The backbone runs once, so the ensemble costs almost nothing at inference.
+The backbone runs once, so the ensemble costs almost nothing at inference. The paper's
+ablations found that the bootstrap makes no measurable difference and that one head is as
+accurate as four; disagreement is a weaker error signal than confidence.
 
 **Evidence head.** A linear head over the state tokens is trained to mark the span that
-decides the answer. Labellers' supporting quotes become per-token targets, which passes some
-of the benefit of step-by-step rationales into a model that never generates.
+decides the answer. Labellers' supporting quotes become per-token targets. It is an auxiliary training signal;
+its effect was not ablated.
 
 **Calibration.** After training, one temperature per question type and one for abstain are
 fitted on a held-out calibration split.
 
 ## Serving path
 
-**Prefix fork.** The state is processed once. Its key-value cache is then expanded across
+**Prefix fork.** Used for requests with more than two questions on a long state (a prefix
+over 1,024 tokens). The state is processed once. Its key-value cache is then expanded across
 all question blocks, which run as one batch. For this backbone the cache is more than
 attention keys and values: the linear-attention layers carry recurrent state and a
 convolution state, and both are forked too. The result matches running each
 `[prefix + question]` separately to about 1e-6 in fp32.
 
-**Length buckets and CUDA graphs.** Inputs are padded to multiples of 128 tokens and each
+**Length buckets and CUDA graphs.** Single-question requests are padded to multiples of 128 tokens and each
 bucket shape is captured as a CUDA graph at start-up. Capture requires a forward pass with
 no host-device synchronisation, so the embedding lookup for the new tokens is branch-free
-and the backbone's attention mask builder is bypassed. This took one decision from about
-2.3 s to 14 ms of model time on an H100.
+and the backbone's attention mask builder is bypassed. This took one decision from about 2.3 s (an early development figure) to 14 ms of model
+time on an H100.
 
-## What Noma introduces
+## How Noma is built
 
-In order of importance:
+The paper measures which of these parts matter. Cutting to 18 layers costs no accuracy, and the abstain output needs its own supervision. The listwise head, the four-head ensemble, the fact channel and the extra loss terms showed no measurable benefit over simpler choices.
+
+The main parts:
 
 1. A decision head on a measured mid-depth cut: listwise scoring, abstain as its own
    calibrated output, and bootstrap-ensemble uncertainty on a shared backbone.
@@ -108,7 +115,7 @@ evidence head; exact-label code generators (see [TRAINING.md](TRAINING.md) and
 | Path | What is in it |
 |---|---|
 | `noma/model/noma.py` | The model: backbone cut, new-token embeddings, `decide`, fast path |
-| `noma/model/heads.py` | Listwise scorer, ensemble, evidence head |
+| `noma/model/heads.py` | Listwise and pointwise scorers, ensemble, evidence head |
 | `noma/model/serialize.py` | Prefix and block serialisation, special tokens |
 | `noma/model/facts.py` | The fact channel |
 | `noma/export.py` | Single-file export and `from_pretrained` |

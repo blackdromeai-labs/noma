@@ -160,13 +160,15 @@ and have not yet been submitted. Noma's "standard" figure is the 72 public origi
 items (the leaderboard's standard tier has 96), and other models' hard tier covers 220 items
 where ours covers the 111 public ones.
 
+The [paper](https://doi.org/10.5281/zenodo.23186353) re-evaluates the released weights item by item on a clean install and reports 15.1 ms median latency, 58/111 on the hard tier, 27/56 on the held-out hard items, and ECE of 0.043 on the sealed set and 0.071 on the original tier. The figures here are from the release-time runs; the two evaluation paths differ on a few items.
+
 Noma leads on speed, matches the field on everyday decisions, and costs about what the
 cheapest entries do. The hard tier is multi-step reasoning, which Noma leaves to a reasoning
 model by design; see [Scope](#scope) and [docs/EVALUATION.md](docs/EVALUATION.md).
 
 ## Calibrated
 
-When Noma says 90%, it is right close to 90% of the time. That is what makes the probabilities
+On single-pass decisions, when Noma says 90% it is right close to 90% of the time. On multi-step questions it is overconfident. Calibration is what makes the probabilities
 usable: you can set a threshold, act automatically above it, and send the rest to a person or
 a bigger model.
 
@@ -179,8 +181,8 @@ Two more signals come with every answer:
 - **`abstain`**: the probability that none of the options is supported by the state. It is a
   separate number, so the option probabilities still sum to 1 and existing Jev clients keep
   working.
-- **`uncertainty`**: disagreement between four independently trained heads. It rises on
-  inputs unlike anything Noma was trained on.
+- **`uncertainty`**: disagreement between four heads that share one backbone. It is a weaker
+  error signal than `confidence`; use it as a secondary check.
 
 ## Accurate where one pass is enough
 
@@ -192,8 +194,7 @@ Two more signals come with every answer:
   <img src="media/families.svg" alt="Sealed set accuracy by decision family" width="82%">
 </p>
 
-The sealed set is 386 human-reviewed decisions across 12 families that no training run or
-data generator ever saw. Full results for every JevBench tier, including the multi-step
+The sealed set is 386 human-reviewed decisions across 12 families that no training run or data generator ever saw. It was used to compare development runs and to choose the release. Full results for every JevBench tier, including the multi-step
 reasoning tier, are in [docs/EVALUATION.md](docs/EVALUATION.md).
 
 ## The playground
@@ -231,21 +232,24 @@ probabilities, and copy the request as curl or Python.
 </p>
 
 Noma keeps the first 18 of 32 layers of Qwen3.5-4B and replaces the language-model head with
-small decision heads. What is new in it:
+small decision heads. How it is built:
 
 1. **A decision head instead of token scoring.** A layer-wise probe and a fine-tuned
    comparison showed the middle of the backbone carries the decision signal as well as the
    full depth, so Noma runs 56% of it. A listwise scorer reads all options together. Abstain
    is its own calibrated output. Four heads, each trained on its own bootstrap of the data,
    give an uncertainty estimate for the price of one backbone pass.
-2. **Fast serving for a hybrid linear-attention backbone.** The state is processed once and
-   its cache, including the recurrent and convolution state of the linear-attention layers,
-   is forked across all questions. Requests are padded to length buckets and each bucket runs
-   as a captured CUDA graph. This took serving from about 2.3 s to 16 ms.
+2. **Fast serving for a hybrid linear-attention backbone.** Single-question requests are padded
+   to length buckets and each bucket runs as a captured CUDA graph. For several questions on a
+   long state, the state is processed once and its cache, including the recurrent and
+   convolution state of the linear-attention layers, is forked across the questions. An early
+   development server took about 2.3 s per decision; the released path takes about 16 ms.
 3. **A fact channel.** Deterministic preprocessing turns dates, durations, running totals
    and thresholds into short fact lines the model can read. They are hints, never overrides.
 4. **Blind, agreement-gated labelling.** Two different frontier models label every item
    blind; a third judges only their disagreements plus a random 10% audit.
+
+The paper measures which of these parts matter. Cutting to 18 layers costs no accuracy, and the abstain output needs its own supervision. The listwise head, the four-head ensemble, the fact channel and the extra loss terms showed no measurable benefit over simpler choices.
 
 <p align="center">
   <img src="media/decision-head.svg" alt="Decision head: hidden states at the marked positions feed four listwise scorers; their mean is the answer and their disagreement is the uncertainty" width="100%">
@@ -256,8 +260,7 @@ and [docs/TRAINING.md](docs/TRAINING.md).
 
 ## Ablations
 
-Every design choice above was tested by changing one thing and holding the recipe, data and
-budget fixed.
+Depth, backbone size and data volume were tested at release by changing one thing and holding the recipe, data and budget fixed. The paper adds three seeds for depth and ablations of the head, the ensemble, the fact channel and the loss.
 
 <p align="center">
   <img src="media/ablations.svg" alt="Ablations: depth and size, training set size, targeted multi-step data" width="100%">
@@ -266,16 +269,16 @@ budget fixed.
 | Change | Sealed set | Hard tier | Reading |
 |---|---|---|---|
 | 4B, 18 of 32 layers (released design) | 79.5% | 50.5% | baseline, 6,000 items |
-| 4B, all 32 layers | 80.1% | 53.2% | nearly twice the compute, within noise |
-| 9B, 16 of 32 layers | 76.2% | 53.2% | a bigger backbone does not help |
-| 6,000 to 32,000 training items | 79.5% to 79.8% | 50.5% to 50.5% | accuracy saturates early |
+| 4B, all 32 layers | 80.1% | 53.2% | about 1.5 times the training time per step, within noise; three seeds in the paper give 79.4% at both depths |
+| 9B, 16 of 32 layers | 76.2% | 53.2% | no gain from a bigger backbone (one seed, earlier data build) |
+| 6,000 to 32,000 training items | 79.5% to 79.8% | 50.5% to 50.5% | no gain in this run (one seed); the paper's runs score 79.4% at 6,000 items and 81.3% to 82.6% on the full set, so this is not settled |
 | + 3,500 targeted multi-step items | 79.8% to 82.6% | 46.4% to 46.4% (held-out) | lifts everyday decisions, not multi-step ones |
 
 <p align="center">
   <img src="media/speed-path.svg" alt="Serving ablation: 2,300 ms for the first working server, 14 ms with the fast path" width="82%">
 </p>
 
-The cut and the fast path are where the speed comes from, and neither costs accuracy.
+Most of the latency reduction comes from the serving path; the cut removes 44% of the layers. Neither costs accuracy on these tests. Inference at full depth was not timed.
 Methods and the remaining numbers are in [docs/EVALUATION.md](docs/EVALUATION.md#controlled-experiments).
 
 ## Scope
@@ -284,8 +287,8 @@ Noma makes single-pass decisions: classify, route, score, check, verify. It is t
 layer in a system, and it is built to know when to hand off.
 
 - Questions that need several chained steps of arithmetic or date reasoning, or tracing a
-  long policy through its amendments, belong with a reasoning model. Use `abstain` and
-  `uncertainty` to route them there.
+  long policy through its amendments, belong with a reasoning model. Confidence does not flag these questions, so route them by
+  question type.
 - Text only. States up to 4,096 tokens.
 - Trained and evaluated in English.
 

@@ -57,7 +57,8 @@ descriptions so that each option could be recognised without seeing the others.
 - `probabilities` always sums to 1 over the options you gave.
 - `confidence` is the top probability (for `noul`, the larger of yes and no).
 - `noma.abstain` is the probability that none of your options is supported by the state.
-- `noma.uncertainty` is the disagreement between Noma's four heads.
+- `noma.uncertainty` is the disagreement between Noma's four heads. It is a weaker error
+  signal than `confidence`.
 - `output_tokens` is always 0. Noma does not generate.
 
 Everything outside the `noma` objects matches the Jev wire format, so an existing Jev client
@@ -69,8 +70,8 @@ The usual pattern is three bands:
 
 ```python
 a = response["answers"]["safe_next"]
-if a["noma"]["abstain"] > 0.5 or a["noma"]["uncertainty"] > 0.1:
-    escalate()                      # the question does not fit the state, or the input is unfamiliar
+if a["noma"]["abstain"] > 0.5:
+    escalate()                      # the question does not fit the state
 elif a["confidence"] >= 0.9:
     act(a)                          # automatic
 else:
@@ -79,13 +80,18 @@ else:
 
 Pick the thresholds on your own traffic: run a few hundred labelled examples, plot accuracy
 against confidence, and choose the confidence above which the error rate is acceptable.
-Because Noma is calibrated, that curve is close to the diagonal and the threshold transfers.
+On single-pass decisions Noma is calibrated, so that curve is close to the diagonal. Pick the
+`abstain` threshold the same way: on out-of-scope queries in our tests the abstain value
+ranked them well but usually stayed below 0.5.
 
 Things worth knowing:
 
 - A high `abstain` with a confident top option means "if forced to choose, this one, but the
   state does not really say". Treat it as no answer.
-- `uncertainty` is small in absolute terms. Values above about 0.1 are unusual.
+- `uncertainty` is small in absolute terms. Values above about 0.1 are unusual. Use it as a
+  secondary check, not as the main signal.
+- Confidence does not flag multi-step questions; Noma is overconfident on them. Route those
+  by question type.
 - For `score` questions, read the whole distribution. A flat distribution over the levels is
   a real answer: the state does not pin the level down.
 - Questions that need several chained calculation steps are outside what one pass does well.

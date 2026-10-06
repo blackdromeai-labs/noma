@@ -48,18 +48,20 @@ This forces it to read the deciding detail instead of the overall tone of the do
 ## Evaluation data and leakage control
 
 - **Sealed set.** 401 decisions across 12 families, human reviewed, held out from every
-  training run and every generator. 386 have a definite answer and are scored for accuracy.
+  training run and every generator. It was used to compare development runs and to choose the
+  release. 386 have a definite answer and are scored for accuracy.
   The set is private and is not released, so it stays usable as a test.
 - **JevBench public tasks** (easy, original, hard) are used for evaluation only, with one
   disclosed exception described next.
 - **Hard-tier split.** The 111 public hard items were split, stratified by family, into 55
   seeds and 56 held-out items. The seeds were used only as abstract structure templates for
   synthetic data: the structure of the problem, never its text. The 56 held-out items were
-  never seen by any generator or training run. Scores on the 55 seeds are not reported as
-  hard-tier results; see [EVALUATION.md](EVALUATION.md).
+  never seen by any generator or training run. The paper reports the 55 seeds separately as
+  "exposed hard". The ids of the 56 held-out items are in
+  [heldout_hard_ids.txt](heldout_hard_ids.txt).
 - **Decontamination.** Every training item is checked against every evaluation item with
-  13-gram overlap and removed on a match. This check caught and removed about 1,600 of our
-  own generated items whose template wording echoed a seed; the templates were reworded.
+  13-gram overlap and removed on a match. In the final build this check removed 181
+  candidate items. Generator templates whose wording echoed a seed were reworded.
 
 ## Not included
 

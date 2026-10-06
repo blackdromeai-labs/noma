@@ -14,7 +14,7 @@ This is the recipe that produced the released weights, and the failures that sha
 | Learning rates | 1e-4 for LoRA and the new embeddings, 1e-3 for the heads, 3% warm-up |
 | Batching | length-bucketed micro-batches of up to 16,384 padded tokens |
 | Memory | gradient checkpointing; bfloat16 autocast |
-| Hardware | one GPU with 40 GB; a few hours |
+| Hardware | one GPU with 40 GB; about 75 minutes on an A100 for the full set |
 
 ```bash
 pip install "blackdrome-noma[train]"
@@ -50,13 +50,16 @@ loss = cross-entropy(soft target)
      + 0.1 * evidence binary cross-entropy
 ```
 
-Cross-entropy alone trains a model to be right. Brier pulls the probabilities towards
-honest values, and the soft targets carry real disagreement (between labellers, or between
+Cross-entropy alone trains a model to be right. Brier and the earth
+mover's term are meant to help calibration; after temperature scaling we could not measure a
+benefit from them. The soft targets carry real disagreement (between labellers, or between
 human annotators in the source data) into the model instead of rounding it away. The earth
 mover's term makes "one level off" cheaper than "three levels off" on ordered scales.
 
 Each of the four heads sees the same batches with its own Poisson(1) weights per item, so
-the heads end up as a bootstrap ensemble without training four models.
+the heads end up as a bootstrap ensemble without training four models. The paper's ablations
+found that the bootstrap makes no measurable difference and that one head is as accurate as
+four.
 
 After training, temperatures (one per question type, one for abstain) are fitted on the
 calibration split.
@@ -86,12 +89,37 @@ backtracked catastrophically. The patterns are now bounded.
 All under the same recipe and data, changing one thing at a time. Details in
 [EVALUATION.md](EVALUATION.md#controlled-experiments).
 
-- **Depth.** Layer 18 of 32 matches the full depth for decisions.
-- **Size.** A 9B backbone matches the 4B one.
-- **Data volume.** About 6,000 training items reach the accuracy of 32,000.
+- **Depth.** Layer 18 of 32 matches the full depth for decisions (79.4% at both, three seeds).
+- **Size.** A 9B backbone scored no better than the 4B one (one seed, earlier data build).
+- **Data volume.** Not settled. One early run showed no gain from more data; the paper's runs
+  give 79.4% at 6,000 items and 81.3% to 82.6% on the full set.
 - **Targeted synthetic data.** Several thousand generated multi-step items did not improve
   held-out multi-step questions. More data of the same kind is not the lever for that tier;
   a single pass is.
+
+## Ablation flags
+
+The trainer and evaluator expose the switches used for the paper's ablations.
+
+| Flag | Default | What it changes |
+|---|---|---|
+| `--head-kind listwise\|pointwise` | `listwise` | the released listwise scorer, or a small MLP that scores each option on its own |
+| `--n-heads` | 4 | ensemble size |
+| `--no-bootstrap` | off | every head sees every item with weight 1 |
+| `--w-brier`, `--w-emd`, `--w-abstain`, `--w-evidence` | 0.5, 0.1, 0.5, 0.1 | loss weights; 0 removes a term |
+| `--data-seed` | `--seed` | seed of the `--limit` subset only, so runs with different seeds can share one subset |
+
+`python -m noma.eval.quick` takes `--sets` to choose evaluation sets and `--dump` to write
+per-item probabilities (no item text). `python -m noma.eval.option_order` reruns choice
+questions with the options reversed and shuffled.
+
+The smallest configuration the paper tested, one pointwise head with cross-entropy, abstain
+and evidence terms, scored within a point of the released design on the sealed set:
+
+```bash
+python -m noma.train.train --backbone Qwen/Qwen3.5-4B-Base --cut 18 --encoded encoded.pkl \
+    --head-kind pointwise --n-heads 1 --no-bootstrap --w-brier 0 --w-emd 0 --out runs/minimal
+```
 
 ## Reproducing
 

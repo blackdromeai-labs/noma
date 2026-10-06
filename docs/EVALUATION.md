@@ -1,7 +1,8 @@
 # Evaluation
 
-Every number published for Noma, how it was measured, and what we learned from the
-experiments behind it.
+The release-time numbers for Noma, how they were measured, and what we learned from the
+experiments behind them. The [paper](https://doi.org/10.5281/zenodo.23186353) adds ablations with
+confidence intervals, an option-order test and zero-shot results.
 
 ## Headline
 
@@ -14,6 +15,8 @@ experiments behind it.
 | JevBench original | **71/72** (98.6%), ECE 0.084 |
 | Sealed set, 12 families | **319/386** (82.6%), ECE 0.042 |
 | JevBench, all public tasks | 176/231 (76.2%) |
+
+The [paper](https://doi.org/10.5281/zenodo.23186353) re-evaluates the released weights item by item on a clean install and reports 15.1 ms median latency, 58/111 on the hard tier, 27/56 on the held-out hard items, and ECE of 0.043 on the sealed set and 0.071 on the original tier. The figures here are from the release-time runs; the two evaluation paths differ on a few items.
 
 ## How latency was measured
 
@@ -87,13 +90,13 @@ forward pass with no scratchpad, and this is the tier where that design shows.
 |---|---|
 | Adversarial | 6/6 |
 | Routing (hard) | 5/5 |
-| Trap | 6/8 |
+| Trap | 7/8 |
 | Trade-off | 4/6 |
 | Judge (hard) | 11/17 |
 | Ambiguous | 4/7 |
 | Multi-hop | 9/18 |
 | Probability | 5/10 |
-| Long policy | 5/19 |
+| Long policy | 4/19 |
 | Temporal / numeric | 3/15 |
 
 (Per-family counts are from the in-process evaluator, which scored 58/111; the HTTP run
@@ -103,21 +106,22 @@ Two things to know about the hard-tier number:
 
 1. **55 of the 111 public hard items were used as structure templates** for synthetic
    training data (the structure, never the text). The clean number is the one on the 56
-   items that no generator or training run ever saw: **26/56 (46.4%)**. We report both and
+   items that no generator or training run ever saw: **26/56 (46.4%)**, or 27/56 in the
+   paper's per-item re-evaluation. We report both and
    treat the held-out figure as the real one.
 2. The families split cleanly. Where the question is a judgement (adversarial, routing,
    trap, trade-off), Noma does well on the hard tier too. Where it is a calculation chain
    (temporal and numeric, long policy), it does not, and that is the part to send to a
    reasoning model.
 
-In practice: use `abstain` and `uncertainty`, plus what you know about the question, to
-route multi-step questions to a model that can reason step by step, and keep Noma on the
-decisions around it.
+In practice: confidence does not flag multi-step questions, so route them by question type
+to a model that can reason step by step, and keep Noma on the decisions around it.
 
 ## Sealed set
 
 386 scored decisions across 12 families, human reviewed, never used in training or by any
-data generator. The set is private.
+data generator. It was used to compare development runs and to choose the release. The set
+is private.
 
 <p align="center"><img src="../media/families.svg" alt="Sealed set accuracy by family" width="80%"></p>
 
@@ -142,13 +146,19 @@ Expected calibration error (top label, lower is better):
 | JevBench hard (public) | 0.186 |
 | JevBench hard (held-out) | 0.263 |
 
+The paper's per-item re-evaluation gives 0.043 for the sealed set, 0.071 for the original tier
+and 0.282 for the held-out hard items.
+
 On the kinds of decisions Noma is built for, stated confidence tracks accuracy closely.
 On multi-step questions it is overconfident, which is one more reason to route those by
 question type and not by confidence alone.
 
 ## Controlled experiments
 
-Each row changes one thing and holds the recipe, data and budget fixed. Differences of a
+Each row changes one thing and holds the recipe, data and budget fixed. These are single runs
+from release time, and the size and data-volume rows used an earlier build of the training
+data. The paper repeats depth with three seeds and adds ablations of the head, the ensemble,
+the fact channel and the loss. Differences of a
 point or two on these set sizes are inside the noise.
 
 **Depth and size** (same LoRA recipe, same 6,000-item subset):
@@ -159,31 +169,35 @@ point or two on these set sizes are inside the noise.
 | 4B | 32 of 32 | 53.2% | 80.1% |
 | 9B | 16 of 32 | 53.2% | 76.2% |
 
+Three seeds in the paper give 79.4% on the sealed set at both 18 and 32 layers.
+
 <p align="center"><img src="../media/ablations.svg" alt="Ablations" width="100%"></p>
 
 **Training set size** (4B, 18 layers): 6,000 items give 79.5% sealed and 50.5% hard;
-32,000 items give 79.8% and 50.5%.
+32,000 items give 79.8% and 50.5% (one seed each).
 
 **Targeted multi-step data**: adding about 3,500 generated multi-step items moved the sealed
 set from 79.8% to 82.6% and left the held-out hard items at 26/56.
 
-**Serving**: the first working server took about 2.3 s per decision; the released fast path
+**Serving**: the first working server took about 2.3 s per decision (an early development
+figure); the released fast path
 takes 14 ms of model time on an H100.
 
 <p align="center"><img src="../media/speed-path.svg" alt="Serving ablation" width="80%"></p>
 
 **Findings**
 
-- **Mid-depth matches full depth for decisions.** Full depth is within noise of layer 18
-  and costs nearly twice the compute.
-- **4B matches 9B** under identical fine-tuning.
-- **Accuracy saturates near 6,000 training items.** The 6,000-item runs above land within
-  noise of the runs on the full set.
+- **Mid-depth matches full depth for decisions.** Full depth is within noise of layer 18.
+  A training step at 18 layers takes about two thirds of the time of one at 32; inference at
+  32 layers was not timed.
+- **4B scored no worse than 9B** under identical fine-tuning (one seed, earlier data build).
+- **Data volume is not settled.** One seed on an earlier data build showed no gain from more
+  data. The paper's runs give 79.4% at 6,000 items and 81.3% to 82.6% on the full set.
 - **Targeted synthetic data does not transfer to held-out multi-step reasoning.** Adding
   about 3,500 generated multi-step items left the held-out hard items unchanged (26/56
   before and after) while the sealed set moved from 79.8% to 82.6%. Data, depth and size
-  all fail to move that tier. We read this as a limit of single-pass decision models, and
-  it is reproducible with the code here.
+  all fail to move that tier. We read this as a limit of single-pass decision models. The
+  code is here; the training data is not, so exact repetition needs our data.
 
 ## Reproducing
 
