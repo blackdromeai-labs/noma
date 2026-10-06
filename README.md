@@ -5,6 +5,7 @@
 <p align="center">
   <a href="LICENSE"><img alt="License: MPL-2.0" src="https://img.shields.io/badge/license-MPL--2.0-7DD0C0?labelColor=08243B"></a>
   <a href="https://huggingface.co/BlackdromeAILabs/noma"><img alt="Weights on Hugging Face" src="https://img.shields.io/badge/weights-Hugging%20Face-7DD0C0?labelColor=08243B"></a>
+  <a href="https://doi.org/10.5281/zenodo.23186353"><img alt="Paper DOI" src="https://img.shields.io/badge/paper-10.5281%2Fzenodo.23186353-7DD0C0?labelColor=08243B"></a>
   <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-7DD0C0?labelColor=08243B">
   <img alt="API: /v1/systemone" src="https://img.shields.io/badge/API-%2Fv1%2Fsystemone-7DD0C0?labelColor=08243B">
 </p>
@@ -17,12 +18,25 @@ writes text, so there is nothing to parse and nothing to wait for.
 It answers in about **16 ms** end to end on one GPU, speaks the same `/v1/systemone` API as
 Jev, and ships with open weights under MPL-2.0.
 
-**[Overview](https://blackdrome.tech/noma)** · **[Noma compared with Jev](https://blackdrome.tech/noma/jev-alternative)** · **[Weights](https://huggingface.co/BlackdromeAILabs/noma)** · **[PyPI](https://pypi.org/project/blackdrome-noma/)**
+**[Paper](https://doi.org/10.5281/zenodo.23186353)** ([PDF](paper/noma-paper.pdf)) · **[Overview](https://blackdrome.tech/noma)** · **[Noma compared with Jev](https://blackdrome.tech/noma/jev-alternative)** · **[Weights](https://huggingface.co/BlackdromeAILabs/noma)** · **[PyPI](https://pypi.org/project/blackdrome-noma/)**
 
 <p align="center">
   <img src="media/playground-presets.gif" alt="The Noma playground answering ticket triage, agent step checks, model routing and contract questions" width="100%">
 </p>
 <p align="center"><sub>The local playground, recorded against the released weights on one NVIDIA L40S. Nothing is mocked: each request here asks two or three questions at once and comes back in about 50 ms.</sub></p>
+
+## Paper
+
+**Noma: An Open System One Decision Model from a Sliced Decoder and Trained Heads**
+Atul Saxena and Divyanshi Sharma, Blackdrome AI Labs, October 2026.
+[DOI 10.5281/zenodo.23186353](https://doi.org/10.5281/zenodo.23186353) · [PDF in this repository](paper/noma-paper.pdf)
+
+The paper documents the architecture and tests each part of it with 20 controlled training
+runs. In short: 18 of the backbone's 32 layers score the same as all of them, the abstain
+output needs its own supervision, and a single small head scores within two points of the
+released four-head design. On held-out questions that need chained computation every
+configuration stays near half. Where this README and the paper differ, the paper is the
+later and more careful measurement.
 
 ## Try it
 
@@ -304,11 +318,13 @@ If either of these matters to what you are building, tell us: hello@blackdrome.t
 ## Citation
 
 ```bibtex
-@software{noma2026,
-  title  = {Noma: an open, calibrated decision model},
-  author = {{Blackdrome AI Labs}},
-  year   = {2026},
-  url    = {https://github.com/blackdromeai-labs/noma}
+@misc{saxena2026noma,
+  title     = {Noma: An Open System One Decision Model from a Sliced Decoder and Trained Heads},
+  author    = {Saxena, Atul and Sharma, Divyanshi},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23186353},
+  url       = {https://doi.org/10.5281/zenodo.23186353}
 }
 ```
 

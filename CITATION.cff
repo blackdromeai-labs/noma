@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use Noma, please cite it as below."
+message: "If you use Noma, please cite the paper below."
 title: "Noma: an open, calibrated decision model"
 authors:
   - name: "Blackdrome AI Labs"
@@ -8,3 +8,19 @@ year: 2026
 license: MPL-2.0
 repository-code: "https://github.com/blackdromeai-labs/noma"
 url: "https://huggingface.co/BlackdromeAILabs/noma"
+preferred-citation:
+  type: article
+  title: "Noma: An Open System One Decision Model from a Sliced Decoder and Trained Heads"
+  authors:
+    - family-names: Saxena
+      given-names: Atul
+      affiliation: "Blackdrome AI Labs"
+    - family-names: Sharma
+      given-names: Divyanshi
+      affiliation: "Blackdrome AI Labs"
+  year: 2026
+  month: 10
+  doi: "10.5281/zenodo.23186353"
+  url: "https://doi.org/10.5281/zenodo.23186353"
+  publisher:
+    name: Zenodo
