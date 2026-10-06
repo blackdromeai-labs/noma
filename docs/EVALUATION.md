@@ -199,6 +199,28 @@ takes 14 ms of model time on an H100.
   all fail to move that tier. We read this as a limit of single-pass decision models. The
   code is here; the training data is not, so exact repetition needs our data.
 
+## External baseline
+
+The untrained base model (Qwen3.5-4B-Base, all 32 layers), zero-shot, scoring each option
+through its language-model head. One prompt, not tuned, nothing calibrated. Same items as above,
+with the hard tier split into its exposed and held-out halves.
+
+| Set | Items | Baseline | Noma | Difference (95% interval) |
+|---|---|---|---|---|
+| Sealed set | 386 | 70.7% | 82.6% | +11.9 [+7.5, +16.3] |
+| JevBench easy | 48 | 100% | 100% | 0 |
+| JevBench original | 72 | 70.8% | 98.6% | +27.8 [+18.1, +38.9] |
+| JevBench hard, exposed | 55 | 52.7% | 56.4% | +3.6 [-9.1, +16.4] |
+| JevBench hard, held-out | 56 | 57.1% | 48.2% | -8.9 [-21.4, +3.6] |
+
+Training pays on single-pass decisions and not on multi-step ones: on the held-out hard items
+the untrained full-depth model does at least as well as Noma (the difference is not
+significant).
+
+```bash
+python -m noma.eval.lm_baseline --backbone Qwen/Qwen3.5-4B-Base --eval /path/to/tasks     --out baseline.json --dump baseline.jsonl
+```
+
 ## Reproducing
 
 ```bash
