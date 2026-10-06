@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import json
-from dataclasses import asdict
 from pathlib import Path
 
 import torch
@@ -35,7 +34,7 @@ def export(ckpt: str, out: str) -> None:
     tensors["embed.table"] = m.embed.table.detach().to(torch.float32).contiguous()
     tensors.update({f"heads.{k}": v.contiguous() for k, v in m.heads.state_dict().items()})
     save_file(tensors, str(out_p / "model.safetensors"), metadata={"format": "pt"})
-    (out_p / "noma_config.json").write_text(json.dumps(asdict(m.cfg), indent=1), encoding="utf-8")
+    (out_p / "noma_config.json").write_text(json.dumps(m.cfg.to_dict(), indent=1), encoding="utf-8")
     (out_p / "backbone_config.json").write_text(body.config.to_json_string(), encoding="utf-8")
     m.tok.save_pretrained(str(out_p))
     size = (out_p / "model.safetensors").stat().st_size / 2**30
@@ -91,7 +90,7 @@ def from_pretrained(path_or_repo: str, device: str | None = None, dtype=torch.bf
     new_ids = [m.ser.special[t] for t in SPECIAL]
     table = state["embed.table"]
     m.embed = NewTokenEmbedding(body.embed_tokens, new_ids, table)
-    m.heads = Heads(bcfg.hidden_size, n_heads=cfg.n_heads, d=cfg.d_head)
+    m.heads = Heads(bcfg.hidden_size, n_heads=cfg.n_heads, kind=cfg.head_kind, d=cfg.d_head)
     m.heads.load_state_dict({k[6:]: v for k, v in state.items() if k.startswith("heads.")})
     m.bucket, m._graphs = None, None
     return m.to(dev).eval()

@@ -1,4 +1,4 @@
-"""Listwise option scorer, its ensemble, and the evidence head."""
+"""Listwise option scorer (and a pointwise baseline), its ensemble, and the evidence head."""
 
 from __future__ import annotations
 
@@ -37,10 +37,37 @@ class ListwiseScorer(nn.Module):
         return opt, ab
 
 
-class Heads(nn.Module):
-    def __init__(self, d_in: int, n_heads: int = 4, **kw):
+class PointwiseScorer(nn.Module):
+    """Baseline: each option is scored alone from [its mark state, q_summary] by an MLP, with no
+    attention across options. Same inputs and outputs as ListwiseScorer."""
+
+    def __init__(self, d_in: int, d: int = 512, ff: int = 1024, dropout: float = 0.1):
         super().__init__()
-        self.scorers = nn.ModuleList(ListwiseScorer(d_in, **kw) for _ in range(n_heads))
+        self.proj = nn.Sequential(nn.Linear(d_in, d), nn.LayerNorm(d))
+        self.role = nn.Embedding(3, d)
+        self.ordinal = nn.Embedding(MAX_LEVELS + 1, d)
+        nn.init.zeros_(self.ordinal.weight)
+        self.mlp = nn.Sequential(nn.Linear(2 * d, ff), nn.GELU(), nn.Dropout(dropout),
+                                 nn.Linear(ff, d), nn.GELU(), nn.Dropout(dropout))
+        self.opt_out = nn.Linear(d, 1)
+        self.abstain_out = nn.Linear(d, 1)
+
+    def forward(self, x, roles, ordinals, pad):
+        h = self.proj(x.float()) + self.role(roles) + self.ordinal(ordinals)
+        h = self.mlp(torch.cat([h, h[:, :1].expand_as(h)], -1))     # slot 0 is q_summary
+        opt = self.opt_out(h).squeeze(-1)
+        ab_idx = (roles == ROLE_ABSTAIN).float().argmax(1)
+        ab = self.abstain_out(h[torch.arange(h.size(0), device=h.device), ab_idx]).squeeze(-1)
+        return opt, ab
+
+
+SCORERS = {"listwise": ListwiseScorer, "pointwise": PointwiseScorer}
+
+
+class Heads(nn.Module):
+    def __init__(self, d_in: int, n_heads: int = 4, kind: str = "listwise", **kw):
+        super().__init__()
+        self.scorers = nn.ModuleList(SCORERS[kind](d_in, **kw) for _ in range(n_heads))
         self.evidence = nn.Linear(d_in, 1)
         # Post-hoc temperatures, fitted on the calibration split.
         self.register_buffer("temperature", torch.ones(3))   # choice, noul, score

@@ -40,6 +40,15 @@ class NomaConfig:
     max_prefix_tokens: int = 3584
     use_facts: bool = True
     facts_version: str = ""
+    head_kind: str = "listwise"   # "pointwise" = the per-option MLP baseline (heads.SCORERS)
+
+    def to_dict(self) -> dict:
+        """Keys added after the first release are written only when they differ from their
+        default, so configs of default models stay loadable by the released package."""
+        d = asdict(self)
+        if d["head_kind"] == "listwise":
+            del d["head_kind"]
+        return d
 
 
 def expand_cache(cache, n: int) -> None:
@@ -121,7 +130,7 @@ class Noma(nn.Module):
         self.body = body
         self.embed = NewTokenEmbedding(emb, new_ids, init)
         d = body.base_model.model.config.hidden_size
-        self.heads = Heads(d, n_heads=cfg.n_heads, d=cfg.d_head)
+        self.heads = Heads(d, n_heads=cfg.n_heads, kind=cfg.head_kind, d=cfg.d_head)
         self.bucket: int | None = None  # serving: pad lengths to multiples of this (see warmup)
         self._graphs: dict | None = None  # serving: CUDA graphs per bucket length (see warmup)
 
@@ -266,7 +275,7 @@ class Noma(nn.Module):
         out = Path(out)
         out.mkdir(parents=True, exist_ok=True)
         torch.save(self.trainable_state(), out / "noma.pt")
-        (out / "config.json").write_text(json.dumps(asdict(self.cfg), indent=1), encoding="utf-8")
+        (out / "config.json").write_text(json.dumps(self.cfg.to_dict(), indent=1), encoding="utf-8")
 
     @classmethod
     def load(cls, path: Path, dtype=torch.bfloat16) -> "Noma":

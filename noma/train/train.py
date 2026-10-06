@@ -11,6 +11,7 @@ Saves only LoRA, the new-token embeddings, and the heads (plus fitted temperatur
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import random
@@ -19,7 +20,7 @@ from pathlib import Path
 
 import torch
 
-from noma.model.heads import TYPE_INDEX
+from noma.model.heads import SCORERS, TYPE_INDEX
 from noma.model.noma import Noma, NomaConfig
 
 from . import losses
@@ -139,7 +140,20 @@ def main() -> None:
     ap.add_argument("--max-prefix", type=int, default=1536)
     ap.add_argument("--no-facts", action="store_true")
     ap.add_argument("--grad-ckpt", action="store_true")
-    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--seed", type=int, default=0,
+                    help="LoRA/head init, dropout, batch order, bootstrap weights, and (unless "
+                         "--data-seed is given) the --limit subset")
+    ap.add_argument("--data-seed", type=int, default=None,
+                    help="seed of the --limit subset only (default: --seed), so runs with "
+                         "different seeds can share one subset")
+    ap.add_argument("--n-heads", type=int, default=4, help="ensemble size")
+    ap.add_argument("--head-kind", choices=sorted(SCORERS), default="listwise")
+    ap.add_argument("--no-bootstrap", action="store_true",
+                    help="every head sees every item once (no Poisson resampling)")
+    ap.add_argument("--w-brier", type=float, default=losses.W_BRIER)
+    ap.add_argument("--w-abstain", type=float, default=losses.W_ABSTAIN)
+    ap.add_argument("--w-emd", type=float, default=losses.W_EMD)
+    ap.add_argument("--w-evidence", type=float, default=losses.W_EVIDENCE)
     ap.add_argument("--log-every", type=int, default=10)
     ap.add_argument("--max-bad", type=int, default=10,
                     help="stop after this many skipped non-finite batches")
@@ -154,9 +168,12 @@ def main() -> None:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     cfg = NomaConfig(backbone=args.backbone, cut=args.cut, max_prefix_tokens=args.max_prefix,
-                     use_facts=not args.no_facts,
+                     use_facts=not args.no_facts, n_heads=args.n_heads, head_kind=args.head_kind,
                      lora_dropout=0.0 if args.overfit else 0.05)
-    m = Noma(cfg).cuda()
+    if torch.cuda.is_available():
+        m = Noma(cfg).cuda()
+    else:   # smoke tests only: fp32, and the autocast contexts below turn themselves off
+        m = Noma(cfg, dtype=torch.float32)
     if args.overfit:
         for mod in m.heads.modules():
             if isinstance(mod, torch.nn.Dropout):
@@ -165,6 +182,10 @@ def main() -> None:
         m.body.base_model.model.gradient_checkpointing_enable(
             gradient_checkpointing_kwargs={"use_reentrant": False})
 
+    data_seed = args.seed if args.data_seed is None else args.data_seed
+    bootstrap = not (args.overfit or args.no_bootstrap)
+    weights = {"w_brier": args.w_brier, "w_abstain": args.w_abstain, "w_emd": args.w_emd,
+               "w_evidence": args.w_evidence}
     t0 = time.time()
     if args.encoded:
         import pickle
@@ -176,13 +197,13 @@ def main() -> None:
         train_items, calib_items = cache["train"], cache["calib"]
         n = args.overfit or args.limit
         if n and n < len(train_items):
-            train_items = random.Random(args.seed).sample(train_items, n)
+            train_items = random.Random(data_seed).sample(train_items, n)
         if args.calib_limit and args.calib_limit < len(calib_items):
             calib_items = random.Random(1).sample(calib_items, args.calib_limit)
         if args.overfit:
             calib_items = train_items
     else:
-        rows = load_jsonl(args.train, args.overfit or args.limit, args.seed)
+        rows = load_jsonl(args.train, args.overfit or args.limit, data_seed)
         train_items = [encode(m.ser, r) for r in rows]
         if args.overfit:
             calib_items = train_items
@@ -193,6 +214,14 @@ def main() -> None:
           f"{time.time() - t0:.0f}s; {ntok / len(train_items):.0f} tokens/item, "
           f"{sum(it.prefix.truncated for it in train_items)} truncated, "
           f"{sum(it.evidence is not None for it in train_items)} with evidence", flush=True)
+
+    ids = hashlib.sha256(" ".join(sorted(it.id for it in train_items)).encode()).hexdigest()[:16]
+    settings_rec = {"seed": args.seed, "data_seed": data_seed, "subset_sha": ids,
+                    "n_heads": args.n_heads, "head_kind": args.head_kind, "bootstrap": bootstrap,
+                    **weights, "use_facts": cfg.use_facts, "backbone": cfg.backbone, "cut": cfg.cut,
+                    "head_params": sum(p.numel() for p in m.heads.scorers.parameters())}
+    (out / "run_settings.json").write_text(json.dumps(settings_rec, indent=1), encoding="utf-8")
+    print("settings " + json.dumps(settings_rec), flush=True)
 
     n_epochs = math.ceil(args.epochs)
     plan = []
@@ -221,7 +250,7 @@ def main() -> None:
     for i, b in enumerate(plan):
         with torch.autocast("cuda", dtype=torch.bfloat16):
             o, a, ev = m.forward_items([(it.prefix, it.block) for it in b])
-        loss, st = losses.compute(o, a, ev, b, seed=args.seed, bootstrap=not args.overfit)
+        loss, st = losses.compute(o, a, ev, b, seed=args.seed, bootstrap=bootstrap, **weights)
         if not torch.isfinite(loss):
             # An earlier run went NaN at one batch and the NaN gradient then poisoned every weight for
             # the rest of the run. A non-finite batch is now skipped and recorded instead.
@@ -269,7 +298,8 @@ def main() -> None:
         coll[i] = (it, lg / t, a / float(m.heads.abstain_temperature))
     after = evaluate(coll)
     m.save(out)
-    summary = {"args": vars(args), "train_items": len(train_items), "steps": steps,
+    summary = {"args": vars(args), "settings": settings_rec, "train_items": len(train_items),
+               "steps": steps,
                "bad_batches": bad_batches,
                "seconds": round(time.time() - t0), "eval_before_temps": before,
                "temperatures": temps, "eval_after_temps": after, "log": log}

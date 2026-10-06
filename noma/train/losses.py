@@ -15,9 +15,12 @@ from .data import Item, bootstrap_weight
 W_BRIER, W_ABSTAIN, W_EMD, W_EVIDENCE = 0.5, 0.5, 0.1, 0.1
 
 
-def compute(opt, ab, ev, items: list[Item], seed: int, bootstrap: bool = True):
+def compute(opt, ab, ev, items: list[Item], seed: int, bootstrap: bool = True,
+            w_brier: float = W_BRIER, w_abstain: float = W_ABSTAIN, w_emd: float = W_EMD,
+            w_evidence: float = W_EVIDENCE):
     """opt [H, B, T] (slot 0 = q summary, 1..K options, K+1 abstain); ab [H, B]; ev list of
-    [n_state] logits. Returns (loss, stats dict)."""
+    [n_state] logits. Returns (loss, stats dict). The w_* weights exist for ablations; stats
+    report every term unweighted, also one whose weight is 0."""
     H = opt.size(0)
     dev = opt.device
     total = opt.new_zeros(())
@@ -30,7 +33,7 @@ def compute(opt, ab, ev, items: list[Item], seed: int, bootstrap: bool = True):
                          dtype=torch.float32, device=dev)
         a_target = torch.full((H,), float(it.abstain), device=dev)
         l_ab = F.binary_cross_entropy_with_logits(ab[:, i].float(), a_target, reduction="none")
-        per_head = W_ABSTAIN * l_ab
+        per_head = w_abstain * l_ab
         parts["abstain"] += l_ab.detach().mean().item()
         if it.target is not None:
             y = torch.tensor(it.target, device=dev).unsqueeze(0).expand(H, K)
@@ -38,12 +41,12 @@ def compute(opt, ab, ev, items: list[Item], seed: int, bootstrap: bool = True):
             p = logp.exp()
             ce = -(y * logp).sum(-1)
             brier = ((p - y) ** 2).sum(-1)
-            per_head = per_head + ce + W_BRIER * brier
+            per_head = per_head + ce + w_brier * brier
             parts["ce"] += ce.detach().mean().item()
             parts["brier"] += brier.detach().mean().item()
             if it.block.qtype == "score" and K > 1:
                 emd = (p.cumsum(-1) - y.cumsum(-1)).abs().sum(-1) / (K - 1)
-                per_head = per_head + W_EMD * emd
+                per_head = per_head + w_emd * emd
                 parts["emd"] += emd.detach().mean().item()
             n_scored += 1
             n_correct += int(int(p.mean(0).argmax()) == max(range(K), key=lambda k: it.target[k]))
@@ -51,7 +54,7 @@ def compute(opt, ab, ev, items: list[Item], seed: int, bootstrap: bool = True):
         if it.evidence is not None and ev[i].numel() == len(it.evidence):
             e = torch.tensor(it.evidence, device=dev)
             l_ev = F.binary_cross_entropy_with_logits(ev[i].float(), e)
-            total = total + W_EVIDENCE * l_ev
+            total = total + w_evidence * l_ev
             parts["evidence"] += l_ev.detach().item()
     n = len(items)
     stats = {k: v / n for k, v in parts.items()}
